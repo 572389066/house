@@ -1,0 +1,1 @@
+"use strict";const o=require("../common/vendor.js");exports.copyContent=function(s){o.index.setClipboardData({data:s+"",showToast:!1,success:function(){console.log("success")},fail:()=>{console.log("fail")}})};

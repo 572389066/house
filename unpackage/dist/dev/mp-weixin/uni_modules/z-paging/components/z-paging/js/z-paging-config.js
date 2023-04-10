@@ -1,0 +1,1 @@
+"use strict";const t=require("../../../../../common/vendor.js");let e=null,n=!1;const o="Z-PAGING-CONFIG-STORAGE-KEY";function g(r){t.index.setStorageSync(o,r)}function i(){return n||(e=t.index.getStorageSync(o),n=!0),e}const c={setConfig:g,getConfig:i};exports.zConfig=c;

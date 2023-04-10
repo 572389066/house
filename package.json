@@ -1,0 +1,15 @@
+{
+    "id": "john-pickdate",
+    "name": "日期选择（限定起始时间）",
+    "version": "1.0.0",
+    "description": "日期选择    可以限定起始时间 ",
+    "keywords": [
+        "日期选择"
+    ],
+    "dcloudext": {
+        "category": [
+            "前端组件",
+            "通用组件"
+        ]
+    }
+}

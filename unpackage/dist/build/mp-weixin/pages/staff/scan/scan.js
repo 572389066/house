@@ -1,0 +1,1 @@
+"use strict";const e=require("../../../common/vendor.js"),t={data:()=>({}),methods:{submitCode(t){this.$staffApi.submitVerifyCode(t).then((t=>{e.index.navigateBack()})).catch((e=>{}))}}};const n=e._export_sfc(t,[["render",function(e,t,n,r,s,c){return{}}]]);wx.createPage(n);

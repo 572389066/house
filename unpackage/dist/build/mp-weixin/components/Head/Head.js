@@ -1,0 +1,1 @@
+"use strict";const t=require("../../common/vendor.js"),e={name:"head",props:["title"],data:()=>({wx:{}}),created(){this.wx=t.wx$1.getMenuButtonBoundingClientRect()}};const n=t._export_sfc(e,[["render",function(e,n,o,c,r,a){return{a:t.t(o.title),b:`${r.wx.height}px`,c:`${r.wx.top}px`}}],["__scopeId","data-v-6f0f2bce"]]);wx.createComponent(n);

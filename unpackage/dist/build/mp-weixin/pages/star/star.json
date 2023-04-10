@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "明星楼盘",
+  "enablePullDownRefresh": false,
+  "navigationBarBackgroundColor": "#F9F9F9",
+  "backgroundColor": "#F9F9F9",
+  "usingComponents": {
+    "z-paging": "../../uni_modules/z-paging/components/z-paging/z-paging"
+  }
+}

@@ -1,0 +1,1 @@
+"use strict";const e={data:()=>({url:""}),onLoad(e){this.url=e.url},onShareAppMessage(e){return this.$shareIndex()},methods:{}};const r=require("../../common/vendor.js")._export_sfc(e,[["render",function(e,r,t,n,o,s){return{a:o.url}}]]);e.__runtimeHooks=2,wx.createPage(r);

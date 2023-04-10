@@ -1,0 +1,1 @@
+<view class="signin data-v-846f438a"><view class="cont data-v-846f438a"><view wx:if="{{a}}" class="title data-v-846f438a">{{b}}</view><view wx:else class="title data-v-846f438a"></view><view class="submit data-v-846f438a" bindtap="{{c}}"><view class="data-v-846f438a">签到登记</view></view></view></view>

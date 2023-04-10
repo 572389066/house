@@ -1,0 +1,365 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				// #ifndef MP-WEIXIN
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"titleNView": false
+				},
+				// #endif
+				// #ifdef MP-WEIXIN
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom"
+				// #endif
+			}
+		}
+	    ,{
+            "path" : "pages/my/my",
+            "style" :                                                                                    
+            {
+                // #ifndef MP-WEIXIN
+                "navigationBarTitleText": "",
+                "app-plus": {
+                	"titleNView": false
+                },
+                // #endif
+                // #ifdef MP-WEIXIN
+                "navigationBarTitleText": "",
+                "navigationStyle": "custom"
+                // #endif
+            }
+            
+        }
+        ,{
+            "path" : "pages/pfs/pfs",
+            "style" :                                                                                    
+            {
+                // #ifndef MP-WEIXIN
+                "navigationBarTitleText": "",
+                "app-plus": {
+                	"titleNView": false
+                },
+                // #endif
+                // #ifdef MP-WEIXIN
+                "navigationBarTitleText": "",
+                "navigationStyle": "custom"
+                // #endif
+            }
+            
+        }
+        ,{
+            "path" : "pages/award/award",
+            "style" :                                                                                    
+            {
+                // #ifndef MP-WEIXIN
+                "navigationBarTitleText": "",
+                "app-plus": {
+                	"titleNView": false
+                },
+                // #endif
+                // #ifdef MP-WEIXIN
+                "navigationBarTitleText": "",
+                "navigationStyle": "custom"
+                // #endif
+            }
+            
+        }
+        ,{
+            "path" : "pages/star/star",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "明星楼盘",
+                "enablePullDownRefresh": false,
+				"navigationBarBackgroundColor": "#F9F9F9",
+				"backgroundColor": "#F9F9F9"
+            }
+            
+        }
+        ,{
+            "path" : "pages/register/register",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "登记",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/register/edit",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "编辑名片",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/activities/activities",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "项目活动",
+                "enablePullDownRefresh": false
+            }
+        }
+        ,{
+            "path" : "pages/search/search",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "搜索",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/pfs/detail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "楼盘详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/award/detail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "推广详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/award/prove",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "上传推广证明",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/award/result",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "上传结果",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/register/record",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "登记记录",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/award/record",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "推广记录",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/feedback/feedback",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "意见反馈",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/area/area",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "地区选择",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/register/signIn",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "签到登记",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/login/login",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "登录",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/register/scan",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/register/detail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "登记详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/web/web",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        },
+		
+		//---------------------------------------------------员工端 START---------------------------------------------------//
+		{
+			"path": "pages/staff/login/login",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/staff/index/index",
+			"style": {
+				"navigationBarTitleText": "森琥好房",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/staff/channel/channel",
+			"style": {
+				"navigationBarTitleText": "选择渠道",
+				"enablePullDownRefresh": false
+			}
+		
+		}, {
+			"path": "pages/staff/qr/qr",
+			"style": {
+				"navigationBarTitleText": "二维码",
+				"enablePullDownRefresh": false
+			}
+		
+		}, {
+			"path": "pages/staff/scan/action",
+			"style": {
+				"navigationBarTitleText": "选择消码方式",
+				"enablePullDownRefresh": false
+			}
+		
+		}, {
+			"path": "pages/staff/building/picker",
+			"style": {
+				"navigationBarTitleText": "选择楼盘",
+				"enablePullDownRefresh": false
+			}
+		
+		}, {
+			"path": "pages/staff/scan/scan",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		
+		}, {
+			"path": "pages/staff/scan/number",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+		
+		}, {
+			"path": "pages/staff/scan/result",
+			"style": {
+				"navigationBarTitleText": "核销结果",
+				"enablePullDownRefresh": false
+			}
+		
+		}
+		,{
+		    "path" : "pages/staff/qr/check_in",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+        ,{
+            "path" : "pages/staff/qr/record",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "登记记录",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/staff/qr/transfer",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "客户转让",
+                "enablePullDownRefresh": false
+            }
+        }
+    ],
+	//---------------------------------------------------员工端 END---------------------------------------------------//
+	
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "森琥好房",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#fff"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#9D9D9D",
+		"selectedColor": "#4C00C8",
+		"borderStyle": "black",
+		"fontSize": "12px",
+		"backgroundColor": "#FFFFFF",
+		"list": [
+			{
+				"selectedIconPath": "static/image/menu/menua1.png",
+				"iconPath": "static/image/menu/menu1.png", 
+				"pagePath": "pages/index/index",
+				"text": "首页"
+			},
+			{
+				"selectedIconPath": "static/image/menu/menua2.png",
+				"iconPath": "static/image/menu/menu2.png",
+				"pagePath": "pages/pfs/pfs",
+				"text": "楼盘"
+			},
+			{
+				"selectedIconPath": "static/image/menu/menua3.png",
+				"iconPath": "static/image/menu/menu3.png",
+				"pagePath": "pages/award/award",
+				"text": "推广获奖"
+			},
+			{
+				"selectedIconPath": "static/image/menu/menua4.png",
+				"iconPath": "static/image/menu/menu4.png",
+				"pagePath": "pages/my/my",
+				"text": "我的"
+			}
+		]
+	}
+}

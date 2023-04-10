@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "head": "../../components/Head/Head",
+    "search": "../../components/Search/Search",
+    "z-paging": "../../uni_modules/z-paging/components/z-paging/z-paging"
+  }
+}

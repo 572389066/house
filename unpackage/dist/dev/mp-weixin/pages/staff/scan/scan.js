@@ -1,0 +1,1 @@
+"use strict";const r=require("../../../common/vendor.js"),s={data(){return{}},methods:{submitCode(e){this.$staffApi.submitVerifyCode(e).then(t=>{r.index.navigateBack()}).catch(t=>{})}}};function a(e,t,n,o,i,u){return{}}const c=r._export_sfc(s,[["render",a],["__file","D:/HBuilderProjects/house/pages/staff/scan/scan.vue"]]);wx.createPage(c);

@@ -1,0 +1,118 @@
+.common-ul {
+	overflow: hidden;
+}
+/* #ifdef H5 */
+.common-ul a {
+	display: block;
+	margin-bottom: 24rpx;
+}
+.common-ul a:last-child {
+	margin: 0;
+}
+/* #endif */
+.common-ul .li {
+	min-height: 200rpx;
+	margin-bottom: 24rpx;
+	display: flex;
+	align-items: center;
+	
+	background: #fff;
+	padding: 24rpx;
+}
+.common-ul .li:last-child {
+	margin: 0;
+}
+.common-ul .li image {
+	width: 35%;
+	height: 200rpx;
+	border-radius: 8rpx;
+}
+.common-ul .li .img {
+	position: relative;
+	width: 35%;
+	height: 200rpx;
+	border-radius: 8rpx;
+	overflow: hidden;
+}
+.common-ul .li .img view {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #D6B07F;
+	border-bottom-right-radius: 8rpx;
+	font-size: 20rpx;
+	line-height: 20rpx;
+	padding: 8rpx 10rpx;
+}
+.common-ul .li .img image {
+	width: 100%;
+	height: 100%;
+	border-radius: 8rpx;
+}
+.common-ul .li .font {
+	width: calc(100% - 200rpx);
+	padding-left: 24rpx;
+}
+.common-ul .li .font .name {
+	font-size: 32rpx;
+	font-weight: 600;
+}
+.common-ul .li .font .m {
+	font-size: 28rpx;
+	color: #E09A5B;
+	font-weight: 600;
+	padding-top: 10rpx;
+}
+.common-ul .li .font .text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-top: 16rpx;
+}
+.common-ul .li .label {
+	overflow: hidden;
+	padding-top: 16rpx;
+}
+.common-ul .li .label view {
+	float: left;
+	padding: 2rpx 10rpx;
+	border: 2rpx solid #626162;
+	border-radius: 4rpx;
+	font-size: 20rpx;
+	color: #626162;
+	margin-right: 8rpx;
+}
+.common_bottom {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 164rpx;
+	background: #fff;
+	z-index: 50;
+	padding: 28rpx 32rpx 38rpx;
+}
+.common_bottom view {
+	width: 100%;
+	height: 100%;
+	background: #333134;
+	border-radius: 8rpx;
+	font-size: 32rpx;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.common_bottom.two {
+	display: flex;
+	justify-content: space-between;
+}
+.common_bottom.two view {
+	width: 48%;
+}
+.common_bottom.two view.active {
+	background: none;
+	border: 2rpx solid #333134;
+	color: #333134;
+}

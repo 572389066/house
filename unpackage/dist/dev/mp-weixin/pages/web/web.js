@@ -1,0 +1,1 @@
+"use strict";const o=require("../../common/vendor.js"),r={data(){return{url:""}},onLoad(e){this.url=e.url},onShareAppMessage(e){return this.$shareIndex()},methods:{}};function t(e,u,a,c,s,_){return{a:s.url}}const n=o._export_sfc(r,[["render",t],["__file","D:/HBuilderProjects/house/pages/web/web.vue"]]);r.__runtimeHooks=2;wx.createPage(n);

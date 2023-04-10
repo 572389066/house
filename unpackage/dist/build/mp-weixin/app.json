@@ -1,0 +1,79 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/my/my",
+    "pages/pfs/pfs",
+    "pages/award/award",
+    "pages/star/star",
+    "pages/register/register",
+    "pages/register/edit",
+    "pages/activities/activities",
+    "pages/search/search",
+    "pages/pfs/detail",
+    "pages/award/detail",
+    "pages/award/prove",
+    "pages/award/result",
+    "pages/register/record",
+    "pages/award/record",
+    "pages/feedback/feedback",
+    "pages/area/area",
+    "pages/register/signIn",
+    "pages/login/login",
+    "pages/register/scan",
+    "pages/register/detail",
+    "pages/web/web",
+    "pages/staff/login/login",
+    "pages/staff/index/index",
+    "pages/staff/channel/channel",
+    "pages/staff/qr/qr",
+    "pages/staff/scan/action",
+    "pages/staff/building/picker",
+    "pages/staff/scan/scan",
+    "pages/staff/scan/number",
+    "pages/staff/scan/result",
+    "pages/staff/qr/check_in",
+    "pages/staff/qr/record",
+    "pages/staff/qr/transfer"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "森琥好房",
+    "navigationBarBackgroundColor": "#fff",
+    "backgroundColor": "#fff"
+  },
+  "tabBar": {
+    "color": "#9D9D9D",
+    "selectedColor": "#4C00C8",
+    "borderStyle": "black",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      {
+        "selectedIconPath": "static/image/menu/menua1.png",
+        "iconPath": "static/image/menu/menu1.png",
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "selectedIconPath": "static/image/menu/menua2.png",
+        "iconPath": "static/image/menu/menu2.png",
+        "pagePath": "pages/pfs/pfs",
+        "text": "楼盘"
+      },
+      {
+        "selectedIconPath": "static/image/menu/menua3.png",
+        "iconPath": "static/image/menu/menu3.png",
+        "pagePath": "pages/award/award",
+        "text": "推广获奖"
+      },
+      {
+        "selectedIconPath": "static/image/menu/menua4.png",
+        "iconPath": "static/image/menu/menu4.png",
+        "pagePath": "pages/my/my",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {},
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json"
+}

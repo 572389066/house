@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "推广记录",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "z-paging": "../../uni_modules/z-paging/components/z-paging/z-paging",
+    "uqrcode": "../../uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode",
+    "uni-popup": "../../uni_modules/uni-popup/components/uni-popup/uni-popup"
+  }
+}
