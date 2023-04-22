@@ -31,7 +31,8 @@
 					type="number" maxlength="100" v-model="customNote"></textarea>
 			</view>
 
-			<button form-type="submit" class="submit">提交</button>
+			<button class="submit loading" v-if="isSubmitting">正在提交...</button>
+			<button form-type="submit" class="submit" v-else>提交</button>
 		</form>
 
 		<uni-popup ref="channelPicker" type="bottom">
@@ -91,6 +92,7 @@
 				buildingData: [],
 				customPhone: '',
 				customNote: '',
+				isSubmitting: false
 			}
 		},
 
@@ -123,7 +125,7 @@
 
 			onClickSubmit(e) {
 				let phone = e.detail.value.phone
-				let note=e.detail.value.note
+				let note = e.detail.value.note
 				if (!this.currentBuilding) {
 					this.$msg('请选择楼盘')
 					return
@@ -147,7 +149,7 @@
 					content: '请确认登记信息，是否确认提交？',
 					success: function(res) {
 						if (res.confirm) {
-							that.submitInfo(phone,note)
+							that.submitInfo(phone, note)
 						} else if (res.cancel) {
 
 						}
@@ -179,17 +181,20 @@
 					})
 			},
 
-			submitInfo(phone,note) {
-				this.$staffApi.submitCustomerCheck(this.currentBuilding.id, this.selectedChannel.id, phone,note)
+			submitInfo(phone, note) {
+				this.isSubmitting = true
+				this.$staffApi.submitCustomerCheck(this.currentBuilding.id, this.selectedChannel.id, phone, note)
 					.then(res => {
 						this.$msg('提交成功')
 						this.customPhone = ''
-						this.customNote=''
+						this.customNote = ''
+						this.isSubmitting = false
 					}).catch(err => {
-
+						this.isSubmitting = false
 					})
 			}
-		}
+		},
+
 	}
 </script>
 
@@ -197,8 +202,8 @@
 	page {
 		background-color: #fff;
 	}
-	
-	
+
+
 
 	.item-box {
 		display: flex;
@@ -231,12 +236,12 @@
 			border-radius: 6rpx;
 		}
 
-		
+
 	}
 
-.note-box{
-			align-items: flex-start;
-		}
+	.note-box {
+		align-items: flex-start;
+	}
 
 	.divider {
 		background-color: #F2F2F2;
@@ -251,6 +256,10 @@
 		margin-top: 160rpx;
 		color: #FFFFFF;
 		background-color: #333134;
+	}
+
+	.loading {
+		background-color: #CCCCCC;
 	}
 
 	.top {

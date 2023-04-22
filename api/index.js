@@ -101,6 +101,11 @@ function fetchUserCard() {
 	return post('/web/user/getCard', {})
 }
 
+//公司列表
+function fetchUserCompany() {
+	return get('/web/user/company', {})
+}
+
 //用户反馈
 function submitFeedback(content, phone) {
 	return post('/web/user/feedBack', {
@@ -220,6 +225,7 @@ export default {
 	submitLogin,
 	submitUserCard,
 	fetchUserCard,
+	fetchUserCompany,
 	submitFeedback,
 	submitSalesCheck,
 	submitCustomCheck,

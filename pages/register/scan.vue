@@ -19,13 +19,16 @@
 			scanCode() {
 				// 允许从相机和相册扫码
 				let that = this
-				uni.scanCode({
-					scanType: ["WX_CODE"],
+				wx.scanCode({
+					// scanType: ["qrCode"],
 					success: (res) => {
-						that.scanResult = res.path
-						let params = that.getPageParams(res.path)
-						let pageName = that.getPageName(res.path)
-
+						console.log("scanCode: success" + JSON.stringify(res));
+						let path=decodeURIComponent(res.path)
+						that.scanResult = path
+						let params = that.getPageParams(path)
+						let pageName = that.getPageName(path)
+						console.log("scanCode params: " + JSON.stringify(params));
+						console.log("scanCode pageName: " + JSON.stringify(pageName));
 						if (params && params.buildingId && params.scene) {
 							if (pageName == '/signIn') {
 								uni.redirectTo({
@@ -46,6 +49,7 @@
 
 					},
 					fail: (res) => {
+						console.log("scanCode: fail" + JSON.stringify(res));
 						that.scanResult = ''
 						uni.navigateBack()
 					},
