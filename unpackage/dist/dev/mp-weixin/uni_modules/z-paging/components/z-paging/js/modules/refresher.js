@@ -1,1 +1,524 @@
-"use strict";const a=require("../../../../../../common/vendor.js"),r=require("../z-paging-utils.js"),u=require("../z-paging-constant.js"),s=require("../z-paging-enum.js"),m={props:{refresherThemeStyle:{type:String,default:r.u.gc("refresherThemeStyle","")},refresherImgStyle:{type:Object,default:function(){return r.u.gc("refresherImgStyle",{})}},refresherTitleStyle:{type:Object,default:function(){return r.u.gc("refresherTitleStyle",{})}},refresherUpdateTimeStyle:{type:Object,default:function(){return r.u.gc("refresherUpdateTimeStyle",{})}},watchRefresherTouchmove:{type:Boolean,default:r.u.gc("watchRefresherTouchmove",!1)},loadingMoreThemeStyle:{type:String,default:r.u.gc("loadingMoreThemeStyle","")},refresherOnly:{type:Boolean,default:r.u.gc("refresherOnly",!1)},refresherDefaultDuration:{type:[Number,String],default:r.u.gc("refresherDefaultDuration",100)},refresherCompleteDelay:{type:[Number,String],default:r.u.gc("refresherCompleteDelay",0)},refresherCompleteDuration:{type:[Number,String],default:r.u.gc("refresherCompleteDuration",300)},refresherCompleteScrollable:{type:Boolean,default:r.u.gc("refresherCompleteScrollable",!1)},useCustomRefresher:{type:Boolean,default:r.u.gc("useCustomRefresher",!0)},refresherFps:{type:[Number,String],default:r.u.gc("refresherFps",40)},refresherMaxAngle:{type:[Number,String],default:r.u.gc("refresherMaxAngle",40)},refresherAngleEnableChangeContinued:{type:Boolean,default:r.u.gc("refresherAngleEnableChangeContinued",!1)},refresherDefaultText:{type:[String,Object],default:r.u.gc("refresherDefaultText",null)},refresherPullingText:{type:[String,Object],default:r.u.gc("refresherPullingText",null)},refresherRefreshingText:{type:[String,Object],default:r.u.gc("refresherRefreshingText",null)},refresherCompleteText:{type:[String,Object],default:r.u.gc("refresherCompleteText",null)},refresherDefaultImg:{type:String,default:r.u.gc("refresherDefaultImg",null)},refresherPullingImg:{type:String,default:r.u.gc("refresherPullingImg",null)},refresherRefreshingImg:{type:String,default:r.u.gc("refresherRefreshingImg",null)},refresherCompleteImg:{type:String,default:r.u.gc("refresherCompleteImg",null)},refresherEndBounceEnabled:{type:Boolean,default:r.u.gc("refresherEndBounceEnabled",!0)},refresherEnabled:{type:Boolean,default:r.u.gc("refresherEnabled",!0)},refresherThreshold:{type:[Number,String],default:r.u.gc("refresherThreshold","80rpx")},refresherDefaultStyle:{type:String,default:r.u.gc("refresherDefaultStyle","black")},refresherBackground:{type:String,default:r.u.gc("refresherBackground","transparent")},refresherFixedBackground:{type:String,default:r.u.gc("refresherFixedBackground","transparent")},refresherFixedBacHeight:{type:[Number,String],default:r.u.gc("refresherFixedBacHeight",0)},refresherOutRate:{type:Number,default:r.u.gc("refresherOutRate",.65)},refresherPullRate:{type:Number,default:r.u.gc("refresherPullRate",.75)},showRefresherUpdateTime:{type:Boolean,default:r.u.gc("showRefresherUpdateTime",!1)},refresherUpdateTimeKey:{type:String,default:r.u.gc("refresherUpdateTimeKey","default")},refresherVibrate:{type:Boolean,default:r.u.gc("refresherVibrate",!1)}},data(){return{R:s.Enum.Refresher,refresherStatus:s.Enum.Refresher.Default,refresherTouchstartY:0,lastRefresherTouchmove:null,refresherReachMaxAngle:!0,refresherTransform:"translateY(0px)",refresherTransition:"",finalRefresherDefaultStyle:"black",refresherRevealStackCount:0,refresherCompleteTimeout:null,refresherCompleteSubTimeout:null,refresherEndTimeout:null,isTouchmovingTimeout:null,refresherTriggered:!1,isTouchmoving:!1,isTouchEnded:!1,isUserPullDown:!1,privateRefresherEnabled:-1,privateShowRefresherWhenReload:!1,customRefresherHeight:-1,showCustomRefresher:!1,doRefreshAnimateAfter:!1,isRefresherInComplete:!1,pullDownTimeStamp:0,moveDis:0,oldMoveDis:0,currentDis:0,oldCurrentMoveDis:0,oldRefresherTouchmoveY:0,oldTouchDirection:"",oldPullingDistance:-1}},watch:{refresherDefaultStyle:{handler(e){e.length&&(this.finalRefresherDefaultStyle=e)},immediate:!0},refresherStatus(e){e===s.Enum.Refresher.Loading&&this._cleanRefresherEndTimeout(),this.refresherVibrate&&e===s.Enum.Refresher.ReleaseToRefresh&&this._doVibrateShort(),this.$emit("refresherStatusChange",e),this.$emit("update:refresherStatus",e)}},computed:{pullDownDisTimeStamp(){return 1e3/this.refresherFps},finalRefresherEnabled(){return this.useChatRecordMode?!1:this.privateRefresherEnabled===-1?this.refresherEnabled:this.privateRefresherEnabled===1},finalRefresherThreshold(){let e=this.refresherThreshold,t=!1;return e==="80rpx"&&(t=!0,this.showRefresherUpdateTime&&(e="120rpx")),t&&this.customRefresherHeight>0?this.customRefresherHeight:r.u.convertToPx(e)},finalRefresherFixedBacHeight(){return r.u.convertToPx(this.refresherFixedBacHeight)},finalRefresherThemeStyle(){return this.refresherThemeStyle.length?this.refresherThemeStyle:this.defaultThemeStyle},finalRefresherOutRate(){let e=this.refresherOutRate;return e=Math.max(0,e),e=Math.min(1,e),e},finalRefresherPullRate(){let e=this.refresherPullRate;return e=Math.max(0,e),e},finalRefresherTransform(){return this.refresherTransform==="translateY(0px)"?"none":this.refresherTransform},finalShowRefresherWhenReload(){return this.showRefresherWhenReload||this.privateShowRefresherWhenReload},finalRefresherTriggered(){return this.finalRefresherEnabled&&!this.useCustomRefresher?this.refresherTriggered:!1},showRefresher(){const e=this.finalRefresherEnabled&&this.useCustomRefresher;return this.customRefresherHeight===-1&&e&&setTimeout(()=>{this.$nextTick(()=>{this._updateCustomRefresherHeight()})},u.c.delayTime),e},hasTouchmove(){return this.watchRefresherTouchmove}},methods:{endRefresh(){this.totalData=this.realTotalData,this._refresherEnd(),this._endSystemLoadingAndRefresh()},handleRefresherStatusChanged(e){this.refresherStatusChangedFunc=e},_onRefresh(e=!1,t=!0){e&&!(this.finalRefresherEnabled&&!this.useCustomRefresher)||(this.$emit("onRefresh"),this.$emit("Refresh"),!(this.loading||this.isRefresherInComplete)&&(this.loadingType=s.Enum.LoadingType.Refresher,!this.nShowRefresherReveal&&(this.isUserPullDown=t,this.isUserReload=!t,this._startLoading(!0),this.refresherTriggered=!0,this.reloadWhenRefresh&&t&&(this.useChatRecordMode?this._onLoadingMore("click"):this._reload(!1,!1,t)))))},_onRestore(){this.refresherTriggered="restore",this.$emit("onRestore"),this.$emit("Restore")},_handleRefresherTouchstart(e){!this.loading&&this.isTouchEnded&&(this.isTouchmoving=!1),this.loadingType=s.Enum.LoadingType.Refresher,this.isTouchmovingTimeout&&clearTimeout(this.isTouchmovingTimeout),this.isTouchEnded=!1,this.refresherTransition="",this.refresherTouchstartY=e.touchY,this.$emit("refresherTouchstart",this.refresherTouchstartY),this.lastRefresherTouchmove=e,this._cleanRefresherCompleteTimeout(),this._cleanRefresherEndTimeout()},_handleRefresherTouchmove(e,t){this.refresherReachMaxAngle=!0,this.isTouchmovingTimeout&&clearTimeout(this.isTouchmovingTimeout),this.isTouchmoving=!0,this.isTouchEnded=!1,this.refresherStatus=e>=this.finalRefresherThreshold?s.Enum.Refresher.ReleaseToRefresh:this.refresherStatus=s.Enum.Refresher.Default,this.moveDis=e},_handleRefresherTouchend(e){this.isTouchmovingTimeout&&clearTimeout(this.isTouchmovingTimeout),this.refresherReachMaxAngle=!0,this.isTouchEnded=!0;const t=this.finalRefresherThreshold;e>=t&&this.refresherStatus===s.Enum.Refresher.ReleaseToRefresh?(setTimeout(()=>{this._emitTouchmove({pullingDistance:t,dy:this.moveDis-t})},.1),this.moveDis=t,this.refresherStatus=s.Enum.Refresher.Loading,this._doRefresherLoad()):(this._refresherEnd(),this.isTouchmovingTimeout=setTimeout(()=>{this.isTouchmoving=!1},this.refresherDefaultDuration)),this.scrollEnable=!0,this.$emit("refresherTouchend",e)},_handleListTouchstart(){this.useChatRecordMode&&this.autoHideKeyboardWhenChat&&(a.index.hideKeyboard(),this.$emit("hidedKeyboard"))},_handleScrollViewDisableBounce({bounce:e}){!this.usePageScroll&&!this.scrollToTopBounceEnabled&&(this.refresherTransition="",this.scrollEnable=e)},_handleWxsPullingDownStatusChange(e){this.wxsOnPullingDown=e,e&&!this.useChatRecordMode&&(this.renderPropScrollTop=0)},_handleWxsPullingDown({moveDis:e,diffDis:t}){this._emitTouchmove({pullingDistance:e,dy:t})},_handleTouchDirectionChange({direction:e}){this.$emit("touchDirectionChange",e)},_handlePropUpdate(){this.wxsPropType=r.u.getTime().toString()},_refresherEnd(e=!0,t=!1,o=!1,n=!0){if(this.loadingType===s.Enum.LoadingType.Refresher){const i=t&&(o||this.showRefresherWhenReload)?this.refresherCompleteDelay:0,f=i>0?s.Enum.Refresher.Complete:s.Enum.Refresher.Default;if(this.finalShowRefresherWhenReload){const h=this.refresherRevealStackCount;if(this.refresherRevealStackCount--,h>1)return}this._cleanRefresherEndTimeout(),this.refresherEndTimeout=setTimeout(()=>{this.refresherStatus=f},this.refresherStatus!==s.Enum.Refresher.Default&&f===s.Enum.Refresher.Default?this.refresherCompleteDuration:0),i>0&&(this.isRefresherInComplete=!0),this._cleanRefresherCompleteTimeout(),this.refresherCompleteTimeout=setTimeout(()=>{let h=1;const l=this.refresherEndBounceEnabled&&t?"cubic-bezier(0.19,1.64,0.42,0.72)":"linear";t&&(h=this.refresherEndBounceEnabled?this.refresherCompleteDuration/1e3:this.refresherCompleteDuration/3e3),this.refresherTransition=`transform ${t?h:this.refresherDefaultDuration/1e3}s ${l}`,this.wxsPropType=this.refresherTransition+"end"+r.u.getTime(),this.moveDis=0,f===s.Enum.Refresher.Complete&&(this.refresherCompleteSubTimeout&&(clearTimeout(this.refresherCompleteSubTimeout),this.refresherCompleteSubTimeout=null),this.refresherCompleteSubTimeout=setTimeout(()=>{this.$nextTick(()=>{this.refresherStatus=s.Enum.Refresher.Default,this.isRefresherInComplete=!1})},h*800)),this._emitTouchmove({pullingDistance:0,dy:this.moveDis})},i)}n&&(setTimeout(()=>{this.loading=!1},e?u.c.delayTime:0),o&&this._onRestore())},_doRefresherRefreshAnimate(){if(this._cleanRefresherCompleteTimeout(),!this.doRefreshAnimateAfter&&this.finalShowRefresherWhenReload&&this.customRefresherHeight===-1&&this.refresherThreshold==="80rpx"){this.doRefreshAnimateAfter=!0;return}this.refresherRevealStackCount++,this.wxsPropType="begin"+r.u.getTime(),this.moveDis=this.finalRefresherThreshold,this.refresherStatus=s.Enum.Refresher.Loading,this.isTouchmoving=!0,this.isTouchmovingTimeout&&clearTimeout(this.isTouchmovingTimeout),this._doRefresherLoad(!1)},_doRefresherLoad(e=!0){this._onRefresh(!1,e),this.loading=!0},_updateCustomRefresherHeight(){this._getNodeClientRect(".zp-custom-refresher-slot-view").then(e=>{this.customRefresherHeight=e?e[0].height:0,this.showCustomRefresher=this.customRefresherHeight>0,this.doRefreshAnimateAfter&&(this.doRefreshAnimateAfter=!1,this._doRefresherRefreshAnimate())})},_emitTouchmove(e){e.viewHeight=this.finalRefresherThreshold,e.rate=e.viewHeight>0?e.pullingDistance/e.viewHeight:0,this.hasTouchmove&&this.oldPullingDistance!==e.pullingDistance&&this.$emit("refresherTouchmove",e),this.oldPullingDistance=e.pullingDistance},_cleanRefresherCompleteTimeout(){this.refresherCompleteTimeout=this._cleanTimeout(this.refresherCompleteTimeout)},_cleanRefresherEndTimeout(){this.refresherEndTimeout=this._cleanTimeout(this.refresherEndTimeout)}}};exports.refresherModule=m;
+"use strict";
+const common_vendor = require("../../../../../../common/vendor.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingUtils = require("../z-paging-utils.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingConstant = require("../z-paging-constant.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingEnum = require("../z-paging-enum.js");
+const refresherModule = {
+  props: {
+    //下拉刷新的主题样式，支持black，white，默认black
+    refresherThemeStyle: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherThemeStyle", "")
+    },
+    //自定义下拉刷新中左侧图标的样式
+    refresherImgStyle: {
+      type: Object,
+      default: function() {
+        return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherImgStyle", {});
+      }
+    },
+    //自定义下拉刷新中右侧状态描述文字的样式
+    refresherTitleStyle: {
+      type: Object,
+      default: function() {
+        return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherTitleStyle", {});
+      }
+    },
+    //自定义下拉刷新中右侧最后更新时间文字的样式(show-refresher-update-time为true时有效)
+    refresherUpdateTimeStyle: {
+      type: Object,
+      default: function() {
+        return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherUpdateTimeStyle", {});
+      }
+    },
+    //在微信小程序和QQ小程序中，是否实时监听下拉刷新中进度，默认为否
+    watchRefresherTouchmove: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("watchRefresherTouchmove", false)
+    },
+    //底部加载更多的主题样式，支持black，white，默认black
+    loadingMoreThemeStyle: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("loadingMoreThemeStyle", "")
+    },
+    //是否只使用下拉刷新，设置为true后将关闭mounted自动请求数据、关闭滚动到底部加载更多，强制隐藏空数据图。默认为否
+    refresherOnly: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherOnly", false)
+    },
+    //自定义下拉刷新默认状态下回弹动画时间，单位为毫秒，默认为100毫秒，nvue无效
+    refresherDefaultDuration: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherDefaultDuration", 100)
+    },
+    //自定义下拉刷新结束以后延迟回弹的时间，单位为毫秒，默认为0
+    refresherCompleteDelay: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherCompleteDelay", 0)
+    },
+    //自定义下拉刷新结束回弹动画时间，单位为毫秒，默认为300毫秒(refresherEndBounceEnabled为false时，refresherCompleteDuration为设定值的1/3)，nvue无效
+    refresherCompleteDuration: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherCompleteDuration", 300)
+    },
+    //自定义下拉刷新结束状态下是否允许列表滚动，默认为否
+    refresherCompleteScrollable: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherCompleteScrollable", false)
+    },
+    //是否使用自定义的下拉刷新，默认为是，即使用z-paging的下拉刷新。设置为false即代表使用uni scroll-view自带的下拉刷新，h5、App、微信小程序以外的平台不支持uni scroll-view自带的下拉刷新
+    useCustomRefresher: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("useCustomRefresher", true)
+    },
+    //自定义下拉刷新下拉帧率，默认为40，过高可能会出现抖动问题
+    refresherFps: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherFps", 40)
+    },
+    //自定义下拉刷新允许触发的最大下拉角度，默认为40度，当下拉角度小于设定值时，自定义下拉刷新动画不会被触发
+    refresherMaxAngle: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherMaxAngle", 40)
+    },
+    //自定义下拉刷新的角度由未达到最大角度变到达到最大角度时，是否继续下拉刷新手势，默认为否
+    refresherAngleEnableChangeContinued: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherAngleEnableChangeContinued", false)
+    },
+    //自定义下拉刷新默认状态下的文字
+    refresherDefaultText: {
+      type: [String, Object],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherDefaultText", null)
+    },
+    //自定义下拉刷新松手立即刷新状态下的文字
+    refresherPullingText: {
+      type: [String, Object],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherPullingText", null)
+    },
+    //自定义下拉刷新刷新中状态下的文字
+    refresherRefreshingText: {
+      type: [String, Object],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherRefreshingText", null)
+    },
+    //自定义下拉刷新刷新结束状态下的文字
+    refresherCompleteText: {
+      type: [String, Object],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherCompleteText", null)
+    },
+    //自定义下拉刷新默认状态下的图片
+    refresherDefaultImg: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherDefaultImg", null)
+    },
+    //自定义下拉刷新松手立即刷新状态下的图片，默认与refresherDefaultImg一致
+    refresherPullingImg: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherPullingImg", null)
+    },
+    //自定义下拉刷新刷新中状态下的图片
+    refresherRefreshingImg: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherRefreshingImg", null)
+    },
+    //自定义下拉刷新刷新结束状态下的图片
+    refresherCompleteImg: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherCompleteImg", null)
+    },
+    //是否开启自定义下拉刷新刷新结束回弹效果，默认为是
+    refresherEndBounceEnabled: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherEndBounceEnabled", true)
+    },
+    //是否开启自定义下拉刷新，默认为是
+    refresherEnabled: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherEnabled", true)
+    },
+    //设置自定义下拉刷新阈值，默认为80rpx
+    refresherThreshold: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherThreshold", "80rpx")
+    },
+    //设置系统下拉刷新默认样式，支持设置 black，white，none，none 表示不使用默认样式，默认为black
+    refresherDefaultStyle: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherDefaultStyle", "black")
+    },
+    //设置自定义下拉刷新区域背景
+    refresherBackground: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherBackground", "transparent")
+    },
+    //设置固定的自定义下拉刷新区域背景
+    refresherFixedBackground: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherFixedBackground", "transparent")
+    },
+    //设置固定的自定义下拉刷新区域高度，默认为0
+    refresherFixedBacHeight: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherFixedBacHeight", 0)
+    },
+    //设置自定义下拉刷新下拉超出阈值后继续下拉位移衰减的比例，范围0-1，值越大代表衰减越多。默认为0.65(nvue无效)
+    refresherOutRate: {
+      type: Number,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherOutRate", 0.65)
+    },
+    //设置自定义下拉刷新下拉时实际下拉位移与用户下拉距离的比值，默认为0.75，即代表若用户下拉10px，则实际位移为7.5px(nvue无效)
+    refresherPullRate: {
+      type: Number,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherPullRate", 0.75)
+    },
+    //是否显示最后更新时间，默认为否
+    showRefresherUpdateTime: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("showRefresherUpdateTime", false)
+    },
+    //如果需要区别不同页面的最后更新时间，请为不同页面的z-paging的`refresher-update-time-key`设置不同的字符串
+    refresherUpdateTimeKey: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherUpdateTimeKey", "default")
+    },
+    //下拉刷新时下拉到“松手立即刷新”状态时是否使手机短振动，默认为否（h5无效）
+    refresherVibrate: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("refresherVibrate", false)
+    }
+  },
+  data() {
+    return {
+      R: uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher,
+      //下拉刷新状态
+      refresherStatus: uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Default,
+      refresherTouchstartY: 0,
+      lastRefresherTouchmove: null,
+      refresherReachMaxAngle: true,
+      refresherTransform: "translateY(0px)",
+      refresherTransition: "",
+      finalRefresherDefaultStyle: "black",
+      refresherRevealStackCount: 0,
+      refresherCompleteTimeout: null,
+      refresherCompleteSubTimeout: null,
+      refresherEndTimeout: null,
+      isTouchmovingTimeout: null,
+      refresherTriggered: false,
+      isTouchmoving: false,
+      isTouchEnded: false,
+      isUserPullDown: false,
+      privateRefresherEnabled: -1,
+      privateShowRefresherWhenReload: false,
+      customRefresherHeight: -1,
+      showCustomRefresher: false,
+      doRefreshAnimateAfter: false,
+      isRefresherInComplete: false,
+      pullDownTimeStamp: 0,
+      moveDis: 0,
+      oldMoveDis: 0,
+      currentDis: 0,
+      oldCurrentMoveDis: 0,
+      oldRefresherTouchmoveY: 0,
+      oldTouchDirection: "",
+      oldPullingDistance: -1
+    };
+  },
+  watch: {
+    refresherDefaultStyle: {
+      handler(newVal) {
+        if (newVal.length) {
+          this.finalRefresherDefaultStyle = newVal;
+        }
+      },
+      immediate: true
+    },
+    refresherStatus(newVal) {
+      newVal === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Loading && this._cleanRefresherEndTimeout();
+      this.refresherVibrate && newVal === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.ReleaseToRefresh && this._doVibrateShort();
+      this.$emit("refresherStatusChange", newVal);
+      this.$emit("update:refresherStatus", newVal);
+    }
+  },
+  computed: {
+    pullDownDisTimeStamp() {
+      return 1e3 / this.refresherFps;
+    },
+    finalRefresherEnabled() {
+      if (this.useChatRecordMode)
+        return false;
+      if (this.privateRefresherEnabled === -1)
+        return this.refresherEnabled;
+      return this.privateRefresherEnabled === 1;
+    },
+    finalRefresherThreshold() {
+      let refresherThreshold = this.refresherThreshold;
+      let idDefault = false;
+      if (refresherThreshold === "80rpx") {
+        idDefault = true;
+        if (this.showRefresherUpdateTime) {
+          refresherThreshold = "120rpx";
+        }
+      }
+      if (idDefault && this.customRefresherHeight > 0)
+        return this.customRefresherHeight;
+      return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.convertToPx(refresherThreshold);
+    },
+    finalRefresherFixedBacHeight() {
+      return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.convertToPx(this.refresherFixedBacHeight);
+    },
+    finalRefresherThemeStyle() {
+      return this.refresherThemeStyle.length ? this.refresherThemeStyle : this.defaultThemeStyle;
+    },
+    finalRefresherOutRate() {
+      let rate = this.refresherOutRate;
+      rate = Math.max(0, rate);
+      rate = Math.min(1, rate);
+      return rate;
+    },
+    finalRefresherPullRate() {
+      let rate = this.refresherPullRate;
+      rate = Math.max(0, rate);
+      return rate;
+    },
+    finalRefresherTransform() {
+      if (this.refresherTransform === "translateY(0px)")
+        return "none";
+      return this.refresherTransform;
+    },
+    finalShowRefresherWhenReload() {
+      return this.showRefresherWhenReload || this.privateShowRefresherWhenReload;
+    },
+    finalRefresherTriggered() {
+      if (!(this.finalRefresherEnabled && !this.useCustomRefresher))
+        return false;
+      return this.refresherTriggered;
+    },
+    showRefresher() {
+      const showRefresher = this.finalRefresherEnabled && this.useCustomRefresher;
+      if (this.customRefresherHeight === -1 && showRefresher) {
+        setTimeout(() => {
+          this.$nextTick(() => {
+            this._updateCustomRefresherHeight();
+          });
+        }, uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.delayTime);
+      }
+      return showRefresher;
+    },
+    hasTouchmove() {
+      return this.watchRefresherTouchmove;
+    }
+  },
+  methods: {
+    //终止下拉刷新状态
+    endRefresh() {
+      this.totalData = this.realTotalData;
+      this._refresherEnd();
+      this._endSystemLoadingAndRefresh();
+    },
+    handleRefresherStatusChanged(func) {
+      this.refresherStatusChangedFunc = func;
+    },
+    //自定义下拉刷新被触发
+    _onRefresh(fromScrollView = false, isUserPullDown = true) {
+      if (fromScrollView && !(this.finalRefresherEnabled && !this.useCustomRefresher))
+        return;
+      this.$emit("onRefresh");
+      this.$emit("Refresh");
+      if (this.loading || this.isRefresherInComplete)
+        return;
+      this.loadingType = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.LoadingType.Refresher;
+      if (this.nShowRefresherReveal)
+        return;
+      this.isUserPullDown = isUserPullDown;
+      this.isUserReload = !isUserPullDown;
+      this._startLoading(true);
+      this.refresherTriggered = true;
+      if (this.reloadWhenRefresh && isUserPullDown) {
+        this.useChatRecordMode ? this._onLoadingMore("click") : this._reload(false, false, isUserPullDown);
+      }
+    },
+    //自定义下拉刷新被复位
+    _onRestore() {
+      this.refresherTriggered = "restore";
+      this.$emit("onRestore");
+      this.$emit("Restore");
+    },
+    //进一步处理拖拽开始结果
+    _handleRefresherTouchstart(touch) {
+      if (!this.loading && this.isTouchEnded) {
+        this.isTouchmoving = false;
+      }
+      this.loadingType = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.LoadingType.Refresher;
+      this.isTouchmovingTimeout && clearTimeout(this.isTouchmovingTimeout);
+      this.isTouchEnded = false;
+      this.refresherTransition = "";
+      this.refresherTouchstartY = touch.touchY;
+      this.$emit("refresherTouchstart", this.refresherTouchstartY);
+      this.lastRefresherTouchmove = touch;
+      this._cleanRefresherCompleteTimeout();
+      this._cleanRefresherEndTimeout();
+    },
+    //进一步处理拖拽中结果
+    _handleRefresherTouchmove(moveDis, touch) {
+      this.refresherReachMaxAngle = true;
+      this.isTouchmovingTimeout && clearTimeout(this.isTouchmovingTimeout);
+      this.isTouchmoving = true;
+      this.isTouchEnded = false;
+      this.refresherStatus = moveDis >= this.finalRefresherThreshold ? uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.ReleaseToRefresh : this.refresherStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Default;
+      this.moveDis = moveDis;
+    },
+    //进一步处理拖拽结束结果
+    _handleRefresherTouchend(moveDis) {
+      this.isTouchmovingTimeout && clearTimeout(this.isTouchmovingTimeout);
+      this.refresherReachMaxAngle = true;
+      this.isTouchEnded = true;
+      const refresherThreshold = this.finalRefresherThreshold;
+      if (moveDis >= refresherThreshold && this.refresherStatus === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.ReleaseToRefresh) {
+        setTimeout(() => {
+          this._emitTouchmove({ pullingDistance: refresherThreshold, dy: this.moveDis - refresherThreshold });
+        }, 0.1);
+        this.moveDis = refresherThreshold;
+        this.refresherStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Loading;
+        this._doRefresherLoad();
+      } else {
+        this._refresherEnd();
+        this.isTouchmovingTimeout = setTimeout(() => {
+          this.isTouchmoving = false;
+        }, this.refresherDefaultDuration);
+      }
+      this.scrollEnable = true;
+      this.$emit("refresherTouchend", moveDis);
+    },
+    //处理列表触摸开始事件
+    _handleListTouchstart() {
+      if (this.useChatRecordMode && this.autoHideKeyboardWhenChat) {
+        common_vendor.index.hideKeyboard();
+        this.$emit("hidedKeyboard");
+      }
+    },
+    //处理scroll-view bounce是否生效
+    _handleScrollViewDisableBounce({ bounce }) {
+      if (!this.usePageScroll && !this.scrollToTopBounceEnabled) {
+        this.refresherTransition = "";
+        this.scrollEnable = bounce;
+      }
+    },
+    //wxs正在下拉状态改变处理
+    _handleWxsPullingDownStatusChange(onPullingDown) {
+      this.wxsOnPullingDown = onPullingDown;
+      if (onPullingDown && !this.useChatRecordMode) {
+        this.renderPropScrollTop = 0;
+      }
+    },
+    //wxs正在下拉处理
+    _handleWxsPullingDown({ moveDis, diffDis }) {
+      this._emitTouchmove({ pullingDistance: moveDis, dy: diffDis });
+    },
+    //wxs触摸方向改变
+    _handleTouchDirectionChange({ direction }) {
+      this.$emit("touchDirectionChange", direction);
+    },
+    //wxs通知更新其props
+    _handlePropUpdate() {
+      this.wxsPropType = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime().toString();
+    },
+    //下拉刷新结束
+    _refresherEnd(shouldEndLoadingDelay = true, fromAddData = false, isUserPullDown = false, setLoading = true) {
+      if (this.loadingType === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.LoadingType.Refresher) {
+        const refresherCompleteDelay = fromAddData && (isUserPullDown || this.showRefresherWhenReload) ? this.refresherCompleteDelay : 0;
+        const refresherStatus = refresherCompleteDelay > 0 ? uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Complete : uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Default;
+        if (this.finalShowRefresherWhenReload) {
+          const stackCount = this.refresherRevealStackCount;
+          this.refresherRevealStackCount--;
+          if (stackCount > 1)
+            return;
+        }
+        this._cleanRefresherEndTimeout();
+        this.refresherEndTimeout = setTimeout(() => {
+          this.refresherStatus = refresherStatus;
+        }, this.refresherStatus !== uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Default && refresherStatus === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Default ? this.refresherCompleteDuration : 0);
+        if (refresherCompleteDelay > 0) {
+          this.isRefresherInComplete = true;
+        }
+        this._cleanRefresherCompleteTimeout();
+        this.refresherCompleteTimeout = setTimeout(() => {
+          let animateDuration = 1;
+          const animateType = this.refresherEndBounceEnabled && fromAddData ? "cubic-bezier(0.19,1.64,0.42,0.72)" : "linear";
+          if (fromAddData) {
+            animateDuration = this.refresherEndBounceEnabled ? this.refresherCompleteDuration / 1e3 : this.refresherCompleteDuration / 3e3;
+          }
+          this.refresherTransition = `transform ${fromAddData ? animateDuration : this.refresherDefaultDuration / 1e3}s ${animateType}`;
+          this.wxsPropType = this.refresherTransition + "end" + uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime();
+          this.moveDis = 0;
+          if (refresherStatus === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Complete) {
+            if (this.refresherCompleteSubTimeout) {
+              clearTimeout(this.refresherCompleteSubTimeout);
+              this.refresherCompleteSubTimeout = null;
+            }
+            this.refresherCompleteSubTimeout = setTimeout(() => {
+              this.$nextTick(() => {
+                this.refresherStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Default;
+                this.isRefresherInComplete = false;
+              });
+            }, animateDuration * 800);
+          }
+          this._emitTouchmove({ pullingDistance: 0, dy: this.moveDis });
+        }, refresherCompleteDelay);
+      }
+      if (setLoading) {
+        setTimeout(() => {
+          this.loading = false;
+        }, shouldEndLoadingDelay ? uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.delayTime : 0);
+        isUserPullDown && this._onRestore();
+      }
+    },
+    //模拟用户手动触发下拉刷新
+    _doRefresherRefreshAnimate() {
+      this._cleanRefresherCompleteTimeout();
+      const doRefreshAnimateAfter = !this.doRefreshAnimateAfter && this.finalShowRefresherWhenReload && this.customRefresherHeight === -1 && this.refresherThreshold === "80rpx";
+      if (doRefreshAnimateAfter) {
+        this.doRefreshAnimateAfter = true;
+        return;
+      }
+      this.refresherRevealStackCount++;
+      this.wxsPropType = "begin" + uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime();
+      this.moveDis = this.finalRefresherThreshold;
+      this.refresherStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.Refresher.Loading;
+      this.isTouchmoving = true;
+      this.isTouchmovingTimeout && clearTimeout(this.isTouchmovingTimeout);
+      this._doRefresherLoad(false);
+    },
+    //触发下拉刷新
+    _doRefresherLoad(isUserPullDown = true) {
+      this._onRefresh(false, isUserPullDown);
+      this.loading = true;
+    },
+    //更新自定义下拉刷新view高度
+    _updateCustomRefresherHeight() {
+      this._getNodeClientRect(".zp-custom-refresher-slot-view").then((res) => {
+        this.customRefresherHeight = res ? res[0].height : 0;
+        this.showCustomRefresher = this.customRefresherHeight > 0;
+        if (this.doRefreshAnimateAfter) {
+          this.doRefreshAnimateAfter = false;
+          this._doRefresherRefreshAnimate();
+        }
+      });
+    },
+    //发射pullingDown事件
+    _emitTouchmove(e) {
+      e.viewHeight = this.finalRefresherThreshold;
+      e.rate = e.viewHeight > 0 ? e.pullingDistance / e.viewHeight : 0;
+      this.hasTouchmove && this.oldPullingDistance !== e.pullingDistance && this.$emit("refresherTouchmove", e);
+      this.oldPullingDistance = e.pullingDistance;
+    },
+    //清除refresherCompleteTimeout
+    _cleanRefresherCompleteTimeout() {
+      this.refresherCompleteTimeout = this._cleanTimeout(this.refresherCompleteTimeout);
+    },
+    //清除refresherEndTimeout
+    _cleanRefresherEndTimeout() {
+      this.refresherEndTimeout = this._cleanTimeout(this.refresherEndTimeout);
+    }
+  }
+};
+exports.refresherModule = refresherModule;

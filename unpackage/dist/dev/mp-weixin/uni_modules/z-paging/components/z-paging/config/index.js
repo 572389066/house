@@ -1,1 +1,3 @@
-"use strict";const o={};exports.zLocalConfig=o;
+"use strict";
+const zLocalConfig = {};
+exports.zLocalConfig = zLocalConfig;

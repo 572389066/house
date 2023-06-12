@@ -1,1 +1,156 @@
-"use strict";const r=require("../common/vendor.js");function y(e){r.index.setStorage({key:"token",data:e})}function f(){try{return r.index.getStorageSync("token")}catch{return""}}function u(e){r.index.setStorage({key:"staffToken",data:e,success:()=>{},fail:t=>{}})}function d(){try{return r.index.getStorageSync("staffToken")}catch{return""}}function g(e){if(!e||e=="")return;let t=a(),n=[];if(n.push(e),t&&t.length>0){let o=t.indexOf(e);o>=0&&t.splice(o,1);for(var i=0;i<t.length&&i<10;i++){let s=t[i];s&&s!=""&&n.push(s)}}r.index.setStorage({key:"historyKeywords",data:JSON.stringify(n)})}function a(){let e=[];try{let t=r.index.getStorageSync("historyKeywords");t&&t!=""&&(e=JSON.parse(t))}catch{return e}return e}function l(){r.index.setStorage({key:"historyKeywords",data:"[]"})}function h(e){e&&e.id&&e.id!=""&&e.name&&e.name!=""?r.index.setStorage({key:"current_building",data:JSON.stringify(e)}):r.index.setStorage({key:"current_building",data:""})}function S(e){let t=null;try{let n=r.index.getStorageSync("current_building");n&&n!=""&&(t=JSON.parse(n))}catch{return t}return t}function k(e){if(e&&e.id&&e.id!=""&&e.name&&e.name!=""){let n=c(),i=[];if(n&&n.length>0)for(var t=0;t<n.length&&i.length<3;t++){let o=n[t];e.id&&o&&o.id!=e.id&&i.push(o)}i.unshift(e),r.index.setStorage({key:"history_building",data:JSON.stringify(i)})}}function c(){let e=[];try{let t=r.index.getStorageSync("history_building");console.log("getHistoryBuilding: "+t),t&&t!=""&&(e=JSON.parse(t))}catch{return e}return e}const x={saveToken:y,getToken:f,saveStaffToken:u,getStaffToken:d,saveHistoryKeywords:g,getHistoryKeywords:a,cleanHistoryKeywords:l,saveCurrentBuilding:h,getCurrentBuilding:S,getHistoryBuilding:c,saveHistoryBuilding:k};exports.cache=x;
+"use strict";
+const common_vendor = require("../common/vendor.js");
+function saveToken(token) {
+  common_vendor.index.setStorage({
+    key: "token",
+    data: token
+  });
+}
+function getToken() {
+  try {
+    return common_vendor.index.getStorageSync("token");
+  } catch (e) {
+    return "";
+  }
+}
+function saveStaffToken(token) {
+  common_vendor.index.setStorage({
+    key: "staffToken",
+    data: token,
+    success: () => {
+    },
+    fail: (err) => {
+    }
+  });
+}
+function getStaffToken() {
+  try {
+    let token = common_vendor.index.getStorageSync("staffToken");
+    return token;
+  } catch (e) {
+    return "";
+  }
+}
+function saveHistoryKeywords(keywords) {
+  if (!keywords || keywords == "") {
+    return;
+  }
+  let historyKeywords = getHistoryKeywords();
+  let arr = [];
+  arr.push(keywords);
+  if (historyKeywords && historyKeywords.length > 0) {
+    let index = historyKeywords.indexOf(keywords);
+    if (index >= 0) {
+      historyKeywords.splice(index, 1);
+    }
+    for (var i = 0; i < historyKeywords.length; i++) {
+      if (i < 10) {
+        let key = historyKeywords[i];
+        if (key && key != "") {
+          arr.push(key);
+        }
+      } else {
+        break;
+      }
+    }
+  }
+  common_vendor.index.setStorage({
+    key: "historyKeywords",
+    data: JSON.stringify(arr)
+  });
+}
+function getHistoryKeywords() {
+  let historyKeywords = [];
+  try {
+    let json = common_vendor.index.getStorageSync("historyKeywords");
+    if (json && json != "") {
+      historyKeywords = JSON.parse(json);
+    }
+  } catch (e) {
+    return historyKeywords;
+  }
+  return historyKeywords;
+}
+function cleanHistoryKeywords() {
+  common_vendor.index.setStorage({
+    key: "historyKeywords",
+    data: "[]"
+  });
+}
+function saveCurrentBuilding(building) {
+  if (building && building.id && building.id != "" && building.name && building.name != "") {
+    common_vendor.index.setStorage({
+      key: "current_building",
+      data: JSON.stringify(building)
+    });
+  } else {
+    common_vendor.index.setStorage({
+      key: "current_building",
+      data: ""
+    });
+  }
+}
+function getCurrentBuilding(building) {
+  let currentBuilding = null;
+  try {
+    let json = common_vendor.index.getStorageSync("current_building");
+    if (json && json != "") {
+      currentBuilding = JSON.parse(json);
+    }
+  } catch (e) {
+    return currentBuilding;
+  }
+  return currentBuilding;
+}
+function saveHistoryBuilding(building) {
+  if (building && building.id && building.id != "" && building.name && building.name != "") {
+    let historyBuilding = getHistoryBuilding();
+    let arr = [];
+    if (historyBuilding && historyBuilding.length > 0) {
+      for (var i = 0; i < historyBuilding.length; i++) {
+        if (arr.length < 3) {
+          let building_ = historyBuilding[i];
+          if (building.id && building_ && building_.id != building.id) {
+            arr.push(building_);
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    arr.unshift(building);
+    common_vendor.index.setStorage({
+      key: "history_building",
+      data: JSON.stringify(arr)
+    });
+  }
+}
+function getHistoryBuilding() {
+  let historyBuilding = [];
+  try {
+    let json = common_vendor.index.getStorageSync("history_building");
+    console.log("getHistoryBuilding: " + json);
+    if (json && json != "") {
+      historyBuilding = JSON.parse(json);
+    }
+  } catch (e) {
+    return historyBuilding;
+  }
+  return historyBuilding;
+}
+const cache = {
+  saveToken,
+  getToken,
+  saveStaffToken,
+  getStaffToken,
+  // savePhone,
+  // getPhone,
+  saveHistoryKeywords,
+  getHistoryKeywords,
+  cleanHistoryKeywords,
+  saveCurrentBuilding,
+  getCurrentBuilding,
+  getHistoryBuilding,
+  saveHistoryBuilding
+};
+exports.cache = cache;

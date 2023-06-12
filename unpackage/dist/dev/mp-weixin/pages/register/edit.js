@@ -1,1 +1,141 @@
-"use strict";const s=require("../../common/vendor.js"),c=require("../../utils/cache.js"),p={data(){return{type:1,userCard:null,userInfo:null,companyName:"",companyData:[]}},onLoad(e){const{type:t}=e;this.type=t,s.index.setNavigationBarTitle({title:t==1?"我的名片":"编辑名片"})},onShow(){this.fetchUserCard(),this.fetchUserInfo(),this.fetchUserCompany()},methods:{showCompanyPicker(){this.$refs.popup.open()},closeCompanyPicker(){this.$refs.popup.close()},onCompanyItemClick(e){this.companyName=e,this.closeCompanyPicker()},getDisplayInputValue(e){return e==="name"&&this.userCard&&this.userCard.name?this.userCard.name:e==="phone"?this.userInfo&&this.userInfo.phone?this.userInfo.phone:"":e==="company"&&this.userCard&&this.userCard.company?this.userCard.company:e==="address"&&this.userCard&&this.userCard.address?this.userCard.address:""},fetchUserInfo(){let e=c.cache.getToken();e&&e!=""?this.$api.fetchUserInfo().then(t=>{this.userInfo=t}).catch(t=>{}):this.userInfo=null},fetchUserCard(){this.$api.fetchUserCard().then(e=>{this.userCard=e,console.log("fetchUserCard: "+JSON.stringify(e)),e&&e.company&&(this.companyName=e.company)}).catch(e=>{})},fetchUserCompany(){this.$api.fetchUserCompany().then(e=>{this.companyData=e}).catch(e=>{})},submitUserCard(e){let t=e.detail.value.name,o=e.detail.value.phone,i=e.detail.value.company,r=e.detail.value.address;if(t.length===0){this.$msg("请输入联系人");return}this.$api.submitUserCard(t,o,i,r).then(n=>{this.$msg("提交成功"),s.index.navigateBack()}).catch(n=>{})}}};if(!Array){const e=s.resolveComponent("uni-icons"),t=s.resolveComponent("uni-popup");(e+t)()}const u=()=>"../../uni_modules/uni-icons/components/uni-icons/uni-icons.js",h=()=>"../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";Math||(u+h)();function m(e,t,o,i,r,n){return{a:n.getDisplayInputValue("name"),b:n.getDisplayInputValue("phone"),c:s.o(a=>n.showCompanyPicker()),d:r.companyName,e:s.o(a=>r.companyName=a.detail.value),f:n.getDisplayInputValue("address"),g:s.t(r.type==1?"确认":"保存并使用"),h:s.o((...a)=>n.submitUserCard&&n.submitUserCard(...a)),i:s.p({type:"closeempty",size:"20",color:"#999999"}),j:s.o((...a)=>n.closeCompanyPicker&&n.closeCompanyPicker(...a)),k:s.f(r.companyData,(a,l,y)=>({a:s.t(a),b:s.o(f=>n.onCompanyItemClick(a))})),l:s.sr("popup","36de54db-0"),m:s.p({type:"bottom"})}}const d=s._export_sfc(p,[["render",m],["__scopeId","data-v-36de54db"],["__file","D:/HBuilderProjects/house/pages/register/edit.vue"]]);wx.createPage(d);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const utils_cache = require("../../utils/cache.js");
+const _sfc_main = {
+  data() {
+    return {
+      type: 1,
+      userCard: null,
+      userInfo: null,
+      companyName: "",
+      companyData: []
+    };
+  },
+  onLoad(options) {
+    const {
+      type
+    } = options;
+    this.type = type;
+    common_vendor.index.setNavigationBarTitle({
+      title: type == 1 ? "我的名片" : "编辑名片"
+    });
+  },
+  onShow() {
+    this.fetchUserCard();
+    this.fetchUserInfo();
+    this.fetchUserCompany();
+  },
+  methods: {
+    showCompanyPicker() {
+      this.$refs.popup.open();
+    },
+    closeCompanyPicker() {
+      this.$refs.popup.close();
+    },
+    onCompanyItemClick(item) {
+      this.companyName = item;
+      this.closeCompanyPicker();
+    },
+    getDisplayInputValue(key) {
+      if (key === "name" && this.userCard && this.userCard.name) {
+        return this.userCard.name;
+      }
+      if (key === "phone") {
+        if (this.userInfo && this.userInfo.phone) {
+          return this.userInfo.phone;
+        } else {
+          return "";
+        }
+      }
+      if (key === "company" && this.userCard && this.userCard.company) {
+        return this.userCard.company;
+      }
+      if (key === "address" && this.userCard && this.userCard.address) {
+        return this.userCard.address;
+      }
+      return "";
+    },
+    fetchUserInfo() {
+      let token = utils_cache.cache.getToken();
+      if (token && token != "") {
+        this.$api.fetchUserInfo().then((res) => {
+          this.userInfo = res;
+        }).catch((res) => {
+        });
+      } else {
+        this.userInfo = null;
+      }
+    },
+    fetchUserCard() {
+      this.$api.fetchUserCard().then((res) => {
+        this.userCard = res;
+        console.log("fetchUserCard: " + JSON.stringify(res));
+        if (res && res.company) {
+          this.companyName = res.company;
+        }
+      }).catch((err) => {
+      });
+    },
+    fetchUserCompany() {
+      this.$api.fetchUserCompany().then((res) => {
+        this.companyData = res;
+      }).catch((err) => {
+      });
+    },
+    submitUserCard(e) {
+      let name = e.detail.value.name;
+      let phone = e.detail.value.phone;
+      let company = e.detail.value.company;
+      let address = e.detail.value.address;
+      if (name.length === 0) {
+        this.$msg("请输入联系人");
+        return;
+      }
+      this.$api.submitUserCard(name, phone, company, address).then((res) => {
+        this.$msg("提交成功");
+        common_vendor.index.navigateBack();
+      }).catch((err) => {
+      });
+    }
+  }
+};
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
+  (_easycom_uni_icons2 + _easycom_uni_popup2)();
+}
+const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+const _easycom_uni_popup = () => "../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";
+if (!Math) {
+  (_easycom_uni_icons + _easycom_uni_popup)();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return {
+    a: $options.getDisplayInputValue("name"),
+    b: $options.getDisplayInputValue("phone"),
+    c: common_vendor.o(($event) => $options.showCompanyPicker()),
+    d: $data.companyName,
+    e: common_vendor.o(($event) => $data.companyName = $event.detail.value),
+    f: $options.getDisplayInputValue("address"),
+    g: common_vendor.t($data.type == 1 ? "确认" : "保存并使用"),
+    h: common_vendor.o((...args) => $options.submitUserCard && $options.submitUserCard(...args)),
+    i: common_vendor.p({
+      type: "closeempty",
+      size: "20",
+      color: "#999999"
+    }),
+    j: common_vendor.o((...args) => $options.closeCompanyPicker && $options.closeCompanyPicker(...args)),
+    k: common_vendor.f($data.companyData, (item, index, i0) => {
+      return {
+        a: common_vendor.t(item),
+        b: common_vendor.o(($event) => $options.onCompanyItemClick(item))
+      };
+    }),
+    l: common_vendor.sr("popup", "36de54db-0"),
+    m: common_vendor.p({
+      type: "bottom"
+    })
+  };
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-36de54db"], ["__file", "D:/uniapp/house/pages/register/edit.vue"]]);
+wx.createPage(MiniProgramPage);

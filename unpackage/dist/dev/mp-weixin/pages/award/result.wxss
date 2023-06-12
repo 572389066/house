@@ -1,1 +1,56 @@
-.result.data-v-bac3464c{overflow:hidden}.result .cont.data-v-bac3464c{overflow:hidden;padding-top:20%}.result .cont .font.data-v-bac3464c{padding-top:10%}.result .cont .font .qr-box.data-v-bac3464c{width:244rpx;height:244rpx;display:block;margin:32rpx auto 0}.result .cont .font ._number.data-v-bac3464c{display:flex;align-items:center;justify-content:center;padding-top:32rpx}.result .cont .font .number.data-v-bac3464c{border:2rpx solid rgba(51,49,52,.15);border-radius:8rpx;padding:10rpx 40rpx;font-size:80rpx;font-weight:600;letter-spacing:10rpx}.result .cont .font .tips.data-v-bac3464c{font-size:24rpx;text-align:center}.result .cont .font .tips text.data-v-bac3464c{color:#e09a5b;padding:0 8rpx}.result .cont .add.data-v-bac3464c{display:flex;align-items:center;justify-content:center}.result .cont .add .yuan.data-v-bac3464c{background:#2EB65F;width:54rpx;height:54rpx;border-radius:50%;display:flex;align-items:center;justify-content:center}.result .cont .add .size.data-v-bac3464c{font-size:32rpx;padding-left:24rpx}
+.result.data-v-bac3464c {
+  overflow: hidden;
+}
+.result .cont.data-v-bac3464c {
+  overflow: hidden;
+  padding-top: 20%;
+}
+.result .cont .font.data-v-bac3464c {
+  padding-top: 10%;
+}
+.result .cont .font .qr-box.data-v-bac3464c {
+  width: 244rpx;
+  height: 244rpx;
+  display: block;
+  margin: 32rpx auto 0;
+}
+.result .cont .font ._number.data-v-bac3464c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 32rpx;
+}
+.result .cont .font .number.data-v-bac3464c {
+  border: 2rpx solid rgba(51, 49, 52, 0.15);
+  border-radius: 8rpx;
+  padding: 10rpx 40rpx;
+  font-size: 80rpx;
+  font-weight: 600;
+  letter-spacing: 10rpx;
+}
+.result .cont .font .tips.data-v-bac3464c {
+  font-size: 24rpx;
+  text-align: center;
+}
+.result .cont .font .tips text.data-v-bac3464c {
+  color: #E09A5B;
+  padding: 0 8rpx;
+}
+.result .cont .add.data-v-bac3464c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.result .cont .add .yuan.data-v-bac3464c {
+  background: #2EB65F;
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.result .cont .add .size.data-v-bac3464c {
+  font-size: 32rpx;
+  padding-left: 24rpx;
+}

@@ -1,1 +1,77 @@
-"use strict";const e=require("../../../common/vendor.js"),s=require("../../../utils/cache.js"),l={data(){return{currentBuilding:null,historyBuilding:null,buildingData:[]}},onLoad(){this.historyBuilding=s.cache.getHistoryBuilding()},methods:{onItemClick(t){t&&(this.currentBuilding=t,this.getOpenerEventChannel().emit("onDateResult",{data:t}),s.cache.saveHistoryBuilding(t),e.index.navigateBack())},fetchBuilding(t,r){this.$staffApi.fetchBuildingList(t,r).then(c=>{this.$refs.paging.complete(c)}).catch(c=>{})}}};Array||e.resolveComponent("z-paging")();const d=()=>"../../../uni_modules/z-paging/components/z-paging/z-paging.js";Math||d();function h(t,r,c,p,n,a){return e.e({a:n.currentBuilding},n.currentBuilding?{b:e.t(n.currentBuilding.name)}:{},{c:n.historyBuilding},n.historyBuilding?{d:e.f(n.historyBuilding,(i,g,u)=>e.e({a:i},i?{b:e.t(i.name),c:e.o(o=>a.onItemClick(i))}:{}))}:{},{e:e.f(n.buildingData,(i,g,u)=>({a:e.t(i.name),b:g,c:e.o(o=>a.onItemClick(i),g)})),f:e.sr("paging","7cab160a-0"),g:e.o(a.fetchBuilding),h:e.o(i=>n.buildingData=i),i:e.p({["default-page-size"]:"30",modelValue:n.buildingData})})}const _=e._export_sfc(l,[["render",h],["__scopeId","data-v-7cab160a"],["__file","D:/HBuilderProjects/house/pages/staff/building/picker.vue"]]);wx.createPage(_);
+"use strict";
+const common_vendor = require("../../../common/vendor.js");
+const utils_cache = require("../../../utils/cache.js");
+const _sfc_main = {
+  data() {
+    return {
+      currentBuilding: null,
+      historyBuilding: null,
+      buildingData: []
+    };
+  },
+  onLoad() {
+    this.historyBuilding = utils_cache.cache.getHistoryBuilding();
+  },
+  methods: {
+    onItemClick(item) {
+      if (item) {
+        this.currentBuilding = item;
+        const eventChannel = this.getOpenerEventChannel();
+        eventChannel.emit("onDateResult", {
+          data: item
+        });
+        utils_cache.cache.saveHistoryBuilding(item);
+        common_vendor.index.navigateBack();
+      }
+    },
+    fetchBuilding(page, pageSize) {
+      this.$staffApi.fetchBuildingList(page, pageSize).then((res) => {
+        this.$refs.paging.complete(res);
+      }).catch((err) => {
+      });
+    }
+  }
+};
+if (!Array) {
+  const _easycom_z_paging2 = common_vendor.resolveComponent("z-paging");
+  _easycom_z_paging2();
+}
+const _easycom_z_paging = () => "../../../uni_modules/z-paging/components/z-paging/z-paging.js";
+if (!Math) {
+  _easycom_z_paging();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return common_vendor.e({
+    a: $data.currentBuilding
+  }, $data.currentBuilding ? {
+    b: common_vendor.t($data.currentBuilding.name)
+  } : {}, {
+    c: $data.historyBuilding
+  }, $data.historyBuilding ? {
+    d: common_vendor.f($data.historyBuilding, (item, index, i0) => {
+      return common_vendor.e({
+        a: item
+      }, item ? {
+        b: common_vendor.t(item.name),
+        c: common_vendor.o(($event) => $options.onItemClick(item))
+      } : {});
+    })
+  } : {}, {
+    e: common_vendor.f($data.buildingData, (item, index, i0) => {
+      return {
+        a: common_vendor.t(item.name),
+        b: index,
+        c: common_vendor.o(($event) => $options.onItemClick(item), index)
+      };
+    }),
+    f: common_vendor.sr("paging", "7cab160a-0"),
+    g: common_vendor.o($options.fetchBuilding),
+    h: common_vendor.o(($event) => $data.buildingData = $event),
+    i: common_vendor.p({
+      ["default-page-size"]: "30",
+      modelValue: $data.buildingData
+    })
+  });
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7cab160a"], ["__file", "D:/uniapp/house/pages/staff/building/picker.vue"]]);
+wx.createPage(MiniProgramPage);

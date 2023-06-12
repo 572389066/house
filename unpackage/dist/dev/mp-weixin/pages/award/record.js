@@ -1,1 +1,91 @@
-"use strict";const e=require("../../common/vendor.js"),t=require("../../common/assets.js"),p={data(){return{qrCodeValue:"",recordData:[]}},methods:{showQRCodeUI(s){s&&s.code_status=="Enable"&&s.code_type=="Qrcode"&&(this.qrCodeValue=s.qrcode,this.$refs.popup.open())},saveQR(){this.$refs.uqrcode.save({success:()=>{e.index.showToast({icon:"success",title:"保存成功"})}})},fetchPromotionRecord(s,r){this.$api.fetchPromotionRecord(s,r).then(c=>{this.$refs.paging.complete(c)}).catch(c=>{this.$refs.paging.complete(!1)})}}};if(!Array){const s=e.resolveComponent("z-paging"),r=e.resolveComponent("uqrcode"),c=e.resolveComponent("uni-popup");(s+r+c)()}const d=()=>"../../uni_modules/z-paging/components/z-paging/z-paging.js",u=()=>"../../uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode.js",_=()=>"../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";Math||(d+u+_)();function i(s,r,c,f,n,a){return{a:e.f(n.recordData,(o,l,h)=>e.e({a:e.t(o.promotion_title),b:e.t(o.date),c:o.code_type==="Qrcode"},o.code_type==="Qrcode"?e.e({d:t._imports_0$3,e:o.code_status==="Enable"},o.code_status==="Enable"?{}:{}):o.code_type==="Number"?e.e({g:e.t(o.code),h:o.code_status==="Enable"},o.code_status==="Enable"?{}:{}):{},{f:o.code_type==="Number",i:e.o(m=>a.showQRCodeUI(o))})),b:e.sr("paging","7df445e8-0"),c:e.o(a.fetchPromotionRecord),d:e.o(o=>n.recordData=o),e:e.p({modelValue:n.recordData}),f:e.sr("uqrcode","7df445e8-2,7df445e8-1"),g:e.p({["canvas-id"]:"qrcode",value:n.qrCodeValue,options:{margin:0},sizeUnit:"rpx",size:"300"}),h:e.o((...o)=>a.saveQR&&a.saveQR(...o)),i:e.sr("popup","7df445e8-1"),j:e.p({type:"center"})}}const g=e._export_sfc(p,[["render",i],["__scopeId","data-v-7df445e8"],["__file","D:/HBuilderProjects/house/pages/award/record.vue"]]);wx.createPage(g);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
+const _sfc_main = {
+  data() {
+    return {
+      qrCodeValue: "",
+      recordData: []
+    };
+  },
+  methods: {
+    showQRCodeUI(item) {
+      if (item && item.code_status == "Enable" && item.code_type == "Qrcode") {
+        this.qrCodeValue = item.qrcode;
+        this.$refs.popup.open();
+      }
+    },
+    saveQR() {
+      this.$refs.uqrcode.save({
+        success: () => {
+          common_vendor.index.showToast({
+            icon: "success",
+            title: "保存成功"
+          });
+        }
+      });
+    },
+    fetchPromotionRecord(page, pageSize) {
+      this.$api.fetchPromotionRecord(page, pageSize).then((res) => {
+        this.$refs.paging.complete(res);
+      }).catch((err) => {
+        this.$refs.paging.complete(false);
+      });
+    }
+  }
+};
+if (!Array) {
+  const _easycom_z_paging2 = common_vendor.resolveComponent("z-paging");
+  const _easycom_uqrcode2 = common_vendor.resolveComponent("uqrcode");
+  const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
+  (_easycom_z_paging2 + _easycom_uqrcode2 + _easycom_uni_popup2)();
+}
+const _easycom_z_paging = () => "../../uni_modules/z-paging/components/z-paging/z-paging.js";
+const _easycom_uqrcode = () => "../../uni_modules/Sansnn-uQRCode/components/uqrcode/uqrcode.js";
+const _easycom_uni_popup = () => "../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";
+if (!Math) {
+  (_easycom_z_paging + _easycom_uqrcode + _easycom_uni_popup)();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return {
+    a: common_vendor.f($data.recordData, (item, index, i0) => {
+      return common_vendor.e({
+        a: common_vendor.t(item.promotion_title),
+        b: common_vendor.t(item.date),
+        c: item.code_type === "Qrcode"
+      }, item.code_type === "Qrcode" ? common_vendor.e({
+        d: common_assets._imports_0$3,
+        e: item.code_status === "Enable"
+      }, item.code_status === "Enable" ? {} : {}) : item.code_type === "Number" ? common_vendor.e({
+        g: common_vendor.t(item.code),
+        h: item.code_status === "Enable"
+      }, item.code_status === "Enable" ? {} : {}) : {}, {
+        f: item.code_type === "Number",
+        i: common_vendor.o(($event) => $options.showQRCodeUI(item))
+      });
+    }),
+    b: common_vendor.sr("paging", "7df445e8-0"),
+    c: common_vendor.o($options.fetchPromotionRecord),
+    d: common_vendor.o(($event) => $data.recordData = $event),
+    e: common_vendor.p({
+      modelValue: $data.recordData
+    }),
+    f: common_vendor.sr("uqrcode", "7df445e8-2,7df445e8-1"),
+    g: common_vendor.p({
+      ["canvas-id"]: "qrcode",
+      value: $data.qrCodeValue,
+      options: {
+        margin: 0
+      },
+      sizeUnit: "rpx",
+      size: "300"
+    }),
+    h: common_vendor.o((...args) => $options.saveQR && $options.saveQR(...args)),
+    i: common_vendor.sr("popup", "7df445e8-1"),
+    j: common_vendor.p({
+      type: "center"
+    })
+  };
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-7df445e8"], ["__file", "D:/uniapp/house/pages/award/record.vue"]]);
+wx.createPage(MiniProgramPage);

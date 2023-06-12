@@ -1,1 +1,442 @@
-"use strict";const n=require("../../../../../common/vendor.js"),h=require("./z-paging-static.js"),a=require("./z-paging-constant.js"),t=require("./z-paging-utils.js"),f=require("./modules/data-handle.js"),m=require("./modules/i18n.js"),p=require("./modules/nvue.js"),_=require("./modules/empty.js"),y=require("./modules/refresher.js"),S=require("./modules/load-more.js"),P=require("./modules/loading.js"),w=require("./modules/scroller.js"),T=require("./modules/back-to-top.js"),z=require("./modules/virtual-list.js"),I=require("./z-paging-enum.js"),b=()=>"../components/z-paging-refresh.js",x=()=>"../components/z-paging-load-more.js",B=()=>"../../z-paging-empty-view/z-paging-empty-view.js",c=n.index.getSystemInfoSync(),C={name:"z-paging",components:{zPagingRefresh:b,zPagingLoadMore:x,zPagingEmptyView:B},mixins:[f.dataHandleModule,m.i18nModule,p.nvueModule,_.emptyModule,y.refresherModule,S.loadMoreModule,P.loadingModule,w.scrollerModule,T.backToTopModule,z.virtualListModule],data(){return{base64Arrow:h.zStatic.base64Arrow,base64Flower:h.zStatic.base64Flower,base64BackToTop:h.zStatic.base64BackToTop,loadingType:I.Enum.LoadingType.Refresher,requestTimeStamp:0,chatRecordLoadingMoreText:"",wxsPropType:"",renderPropScrollTop:-1,checkScrolledToBottomTimeOut:null,systemInfo:null,cssSafeAreaInsetBottom:-1,cacheTopHeight:-1,insideOfPaging:-1,isLoadFailed:!1,isIos:c.platform==="ios",disabledBounce:!1,fromCompleteEmit:!1,disabledCompleteEmit:!1,wxsIsScrollTopInTopRange:!0,wxsScrollTop:0,wxsPageScrollTop:0,wxsOnPullingDown:!1}},props:{delay:{type:[Number,String],default:t.u.gc("delay",0)},minDelay:{type:[Number,String],default:t.u.gc("minDelay",0)},pagingStyle:{type:Object,default:function(){return t.u.gc("pagingStyle",{})}},height:{type:String,default:t.u.gc("height","")},width:{type:String,default:t.u.gc("width","")},bgColor:{type:String,default:t.u.gc("bgColor","")},pagingContentStyle:{type:Object,default:function(){return t.u.gc("pagingContentStyle",{})}},autoHeight:{type:Boolean,default:t.u.gc("autoHeight",!1)},autoHeightAddition:{type:[Number,String],default:t.u.gc("autoHeightAddition","0px")},defaultThemeStyle:{type:String,default:t.u.gc("defaultThemeStyle","black")},fixed:{type:Boolean,default:t.u.gc("fixed",!0)},safeAreaInsetBottom:{type:Boolean,default:t.u.gc("safeAreaInsetBottom",!1)},useSafeAreaPlaceholder:{type:Boolean,default:t.u.gc("useSafeAreaPlaceholder",!1)},topZIndex:{type:Number,default:t.u.gc("topZIndex",99)},superContentZIndex:{type:Number,default:t.u.gc("superContentZIndex",1)},contentZIndex:{type:Number,default:t.u.gc("contentZIndex",10)},autoFullHeight:{type:Boolean,default:t.u.gc("autoFullHeight",!0)},watchTouchDirectionChange:{type:Boolean,default:t.u.gc("watchTouchDirectionChange",!1)}},created(){this.createdReload&&!this.refresherOnly&&this.auto&&(this._startLoading(),this._preReload())},mounted(){this.wxsPropType=t.u.getTime().toString(),this.renderJsIgnore,!this.createdReload&&!this.refresherOnly&&this.auto&&this.$nextTick(()=>{this._preReload()}),this.finalUseCache&&this._setListByLocalCache();let e=0;e=100,this.$nextTick(()=>{this.systemInfo=n.index.getSystemInfoSync(),!this.usePageScroll&&this.autoHeight&&this._setAutoHeight(),this.loaded=!0}),this.updatePageScrollTopHeight(),this.updatePageScrollBottomHeight(),this._updateLeftAndRightWidth(),this.finalRefresherEnabled&&this.useCustomRefresher&&this.$nextTick(()=>{this.isTouchmoving=!0}),this._onEmit(),this.finalUseVirtualList&&this._virtualListInit(),this.$nextTick(()=>{setTimeout(()=>{this._getCssSafeAreaInsetBottom()},e)})},destroyed(){this._offEmit()},unmounted(){this._offEmit()},watch:{defaultThemeStyle:{handler(e){e.length&&(this.finalRefresherDefaultStyle=e)},immediate:!0},autoHeight(e){this.loaded&&!this.usePageScroll&&this._setAutoHeight(e)},autoHeightAddition(e){this.loaded&&!this.usePageScroll&&this.autoHeight&&this._setAutoHeight(e)}},computed:{finalPagingStyle(){const e=this.pagingStyle;if(!this.systemInfo)return e;const o=this.windowTop,i=this.windowBottom;return!this.usePageScroll&&this.fixed&&(o&&!e.top&&(e.top=o+"px"),i&&!e.bottom&&(e.bottom=i+"px")),this.bgColor.length&&!e.background&&(e.background=this.bgColor),this.height.length&&!e.height&&(e.height=this.height),this.width.length&&!e.width&&(e.width=this.width),e},finalLowerThreshold(){return t.u.convertToPx(this.lowerThreshold)},finalPagingContentStyle(){return this.contentZIndex!=1&&(this.pagingContentStyle["z-index"]=this.contentZIndex,this.pagingContentStyle.position="relative"),this.pagingContentStyle},safeAreaBottom(){if(!this.systemInfo)return 0;let e=0;return e=this.cssSafeAreaInsetBottom===-1?0:this.cssSafeAreaInsetBottom,e},renderJsIgnore(){return(this.usePageScroll&&this.useChatRecordMode||!this.refresherEnabled||!this.useCustomRefresher)&&this.$nextTick(()=>{this.renderPropScrollTop=10}),0},windowHeight(){return this.systemInfo&&this.systemInfo.windowHeight||0},windowTop(){return this.systemInfo&&this.systemInfo.windowTop||0},windowBottom(){if(!this.systemInfo)return 0;let e=this.systemInfo.windowBottom||0;return this.safeAreaInsetBottom&&!this.useSafeAreaPlaceholder&&(e+=this.safeAreaBottom),e},isOldWebView(){try{const e=c.system.split(" "),o=e[0],i=parseInt(e[1].slice(0,1));if(o==="iOS"&&i<=10||o==="Android"&&i<=6)return!0}catch{return!1}return!1},isIosAndH5(){return!1},zSlots(){return this.$slots}},methods:{getVersion(){return`z-paging v${a.c.version}`},setSpecialEffects(e){this.setListSpecialEffects(e)},setListSpecialEffects(e){this.nFixFreezing=e&&Object.keys(e).length,this.isIos&&(this.privateRefresherEnabled=0),this.usePageScroll||this.$refs["zp-n-list"].setSpecialEffects(e)},_doVibrateShort(){n.index.vibrateShort()},async _setAutoHeight(e=!0,o=null){let i="min-height";i="min-height";try{if(e){let s=o||await this._getNodeClientRect(".zp-scroll-view"),r=await this._getNodeClientRect(".zp-page-bottom");if(s){const u=s[0].top;let l=this.windowHeight-u;r&&(l-=r[0].height);const d=t.u.convertToPx(this.autoHeightAddition),g=l+d-(this.insideMore?1:0)+"px !important";this.$set(this.scrollViewStyle,i,g),this.$set(this.scrollViewInStyle,i,g)}}else this.$delete(this.scrollViewStyle,i),this.$delete(this.scrollViewInStyle,i)}catch{}},_getCssSafeAreaInsetBottom(){this._getNodeClientRect(".zp-safe-area-inset-bottom").then(e=>{e&&(this.cssSafeAreaInsetBottom=e[0].height,this.safeAreaInsetBottom&&this.updatePageScrollBottomHeight())})},_updateInsideOfPaging(){this.insideMore&&this.insideOfPaging===!0&&setTimeout(()=>{this.doLoadMore()},200)},_getNodeClientRect(e,o=!0,i=!1){let s=o?n.index.createSelectorQuery().in(o===!0?this:o):n.index.createSelectorQuery();return i?s.select(e).scrollOffset():s.select(e).boundingClientRect(),new Promise((r,u)=>{s.exec(l=>{r(l&&l!=""&&l!=null&&l.length?l:!1)})})},_cleanTimeout(e){return e&&(clearTimeout(e),e=null),e},_onEmit(){n.index.$on(a.c.errorUpdateKey,()=>{this.loading&&this.complete(!1)}),n.index.$on(a.c.completeUpdateKey,e=>{setTimeout(()=>{if(this.loading)if(this.disabledCompleteEmit)this.disabledCompleteEmit=!1;else{const o=e.type||"normal",i=e.list||e,s=e.rule;switch(this.fromCompleteEmit=!0,o){case"normal":this.complete(i);break;case"total":this.completeByTotal(i,s);break;case"nomore":this.completeByNoMore(i,s);break;case"key":this.completeByKey(i,s);break}}},1)})},_offEmit(){n.index.$off(a.c.errorUpdateKey),n.index.$off(a.c.completeUpdateKey)}}};exports._sfc_main=C;
+"use strict";
+const common_vendor = require("../../../../../common/vendor.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingStatic = require("./z-paging-static.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingConstant = require("./z-paging-constant.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingUtils = require("./z-paging-utils.js");
+const uni_modules_zPaging_components_zPaging_js_modules_dataHandle = require("./modules/data-handle.js");
+const uni_modules_zPaging_components_zPaging_js_modules_i18n = require("./modules/i18n.js");
+const uni_modules_zPaging_components_zPaging_js_modules_nvue = require("./modules/nvue.js");
+const uni_modules_zPaging_components_zPaging_js_modules_empty = require("./modules/empty.js");
+const uni_modules_zPaging_components_zPaging_js_modules_refresher = require("./modules/refresher.js");
+const uni_modules_zPaging_components_zPaging_js_modules_loadMore = require("./modules/load-more.js");
+const uni_modules_zPaging_components_zPaging_js_modules_loading = require("./modules/loading.js");
+const uni_modules_zPaging_components_zPaging_js_modules_scroller = require("./modules/scroller.js");
+const uni_modules_zPaging_components_zPaging_js_modules_backToTop = require("./modules/back-to-top.js");
+const uni_modules_zPaging_components_zPaging_js_modules_virtualList = require("./modules/virtual-list.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingEnum = require("./z-paging-enum.js");
+const zPagingRefresh = () => "../components/z-paging-refresh.js";
+const zPagingLoadMore = () => "../components/z-paging-load-more.js";
+const zPagingEmptyView = () => "../../z-paging-empty-view/z-paging-empty-view.js";
+const systemInfo = common_vendor.index.getSystemInfoSync();
+const _sfc_main = {
+  name: "z-paging",
+  components: {
+    zPagingRefresh,
+    zPagingLoadMore,
+    zPagingEmptyView
+  },
+  mixins: [
+    uni_modules_zPaging_components_zPaging_js_modules_dataHandle.dataHandleModule,
+    uni_modules_zPaging_components_zPaging_js_modules_i18n.i18nModule,
+    uni_modules_zPaging_components_zPaging_js_modules_nvue.nvueModule,
+    uni_modules_zPaging_components_zPaging_js_modules_empty.emptyModule,
+    uni_modules_zPaging_components_zPaging_js_modules_refresher.refresherModule,
+    uni_modules_zPaging_components_zPaging_js_modules_loadMore.loadMoreModule,
+    uni_modules_zPaging_components_zPaging_js_modules_loading.loadingModule,
+    uni_modules_zPaging_components_zPaging_js_modules_scroller.scrollerModule,
+    uni_modules_zPaging_components_zPaging_js_modules_backToTop.backToTopModule,
+    uni_modules_zPaging_components_zPaging_js_modules_virtualList.virtualListModule
+  ],
+  data() {
+    return {
+      //--------------静态资源---------------
+      base64Arrow: uni_modules_zPaging_components_zPaging_js_zPagingStatic.zStatic.base64Arrow,
+      base64Flower: uni_modules_zPaging_components_zPaging_js_zPagingStatic.zStatic.base64Flower,
+      base64BackToTop: uni_modules_zPaging_components_zPaging_js_zPagingStatic.zStatic.base64BackToTop,
+      //-------------全局数据相关--------------
+      //当前加载类型
+      loadingType: uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.LoadingType.Refresher,
+      requestTimeStamp: 0,
+      chatRecordLoadingMoreText: "",
+      wxsPropType: "",
+      renderPropScrollTop: -1,
+      checkScrolledToBottomTimeOut: null,
+      systemInfo: null,
+      cssSafeAreaInsetBottom: -1,
+      cacheTopHeight: -1,
+      //--------------状态&判断---------------
+      insideOfPaging: -1,
+      isLoadFailed: false,
+      isIos: systemInfo.platform === "ios",
+      disabledBounce: false,
+      fromCompleteEmit: false,
+      disabledCompleteEmit: false,
+      //---------------wxs相关---------------
+      wxsIsScrollTopInTopRange: true,
+      wxsScrollTop: 0,
+      wxsPageScrollTop: 0,
+      wxsOnPullingDown: false
+    };
+  },
+  props: {
+    //调用complete后延迟处理的时间，单位为毫秒，默认0毫秒，优先级高于minDelay
+    delay: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("delay", 0)
+    },
+    //触发@query后最小延迟处理的时间，单位为毫秒，默认0毫秒，优先级低于delay（假设设置为300毫秒，若分页请求时间小于300毫秒，则在调用complete后延迟[300毫秒-请求时长]；若请求时长大于300毫秒，则不延迟），当show-refresher-when-reload为true或reload(true)时，其最小值为400
+    minDelay: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("minDelay", 0)
+    },
+    //设置z-paging的style，部分平台(如微信小程序)无法直接修改组件的style，可使用此属性代替
+    pagingStyle: {
+      type: Object,
+      default: function() {
+        return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("pagingStyle", {});
+      }
+    },
+    //z-paging的高度，优先级低于pagingStyle中设置的height；传字符串，如100px、100rpx、100%
+    height: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("height", "")
+    },
+    //z-paging的宽度，优先级低于pagingStyle中设置的width；传字符串，如100px、100rpx、100%
+    width: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("width", "")
+    },
+    //z-paging的背景色，优先级低于pagingStyle中设置的background。传字符串，如"#ffffff"
+    bgColor: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("bgColor", "")
+    },
+    //设置z-paging的容器(插槽的父view)的style
+    pagingContentStyle: {
+      type: Object,
+      default: function() {
+        return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("pagingContentStyle", {});
+      }
+    },
+    //z-paging是否自动高度，若自动高度则会自动铺满屏幕
+    autoHeight: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autoHeight", false)
+    },
+    //z-paging是否自动高度时，附加的高度，注意添加单位px或rpx，若需要减少高度，则传负数
+    autoHeightAddition: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autoHeightAddition", "0px")
+    },
+    //loading(下拉刷新、上拉加载更多)的主题样式，支持black，white，默认black
+    defaultThemeStyle: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("defaultThemeStyle", "black")
+    },
+    //z-paging是否使用fixed布局，若使用fixed布局，则z-paging的父view无需固定高度，z-paging高度默认为100%，默认为是(当使用内置scroll-view滚动时有效)
+    fixed: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("fixed", true)
+    },
+    //是否开启底部安全区域适配
+    safeAreaInsetBottom: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("safeAreaInsetBottom", false)
+    },
+    //开启底部安全区域适配后，是否使用placeholder形式实现，默认为否。为否时滚动区域会自动避开底部安全区域，也就是所有滚动内容都不会挡住底部安全区域，若设置为是，则滚动时滚动内容会挡住底部安全区域，但是当滚动到底部时才会避开底部安全区域
+    useSafeAreaPlaceholder: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("useSafeAreaPlaceholder", false)
+    },
+    //slot="top"的view的z-index，默认为99，仅使用页面滚动时有效
+    topZIndex: {
+      type: Number,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("topZIndex", 99)
+    },
+    //z-paging内容容器父view的z-index，默认为1
+    superContentZIndex: {
+      type: Number,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("superContentZIndex", 1)
+    },
+    //z-paging内容容器部分的z-index，默认为10
+    contentZIndex: {
+      type: Number,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("contentZIndex", 10)
+    },
+    //使用页面滚动时，是否在不满屏时自动填充满屏幕，默认为是
+    autoFullHeight: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autoFullHeight", true)
+    },
+    //是否监听列表触摸方向改变，默认为否
+    watchTouchDirectionChange: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("watchTouchDirectionChange", false)
+    }
+  },
+  created() {
+    if (this.createdReload && !this.refresherOnly && this.auto) {
+      this._startLoading();
+      this._preReload();
+    }
+  },
+  mounted() {
+    this.wxsPropType = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime().toString();
+    this.renderJsIgnore;
+    if (!this.createdReload && !this.refresherOnly && this.auto) {
+      this.$nextTick(() => {
+        this._preReload();
+      });
+    }
+    this.finalUseCache && this._setListByLocalCache();
+    let delay = 0;
+    delay = 100;
+    this.$nextTick(() => {
+      this.systemInfo = common_vendor.index.getSystemInfoSync();
+      !this.usePageScroll && this.autoHeight && this._setAutoHeight();
+      this.loaded = true;
+    });
+    this.updatePageScrollTopHeight();
+    this.updatePageScrollBottomHeight();
+    this._updateLeftAndRightWidth();
+    if (this.finalRefresherEnabled && this.useCustomRefresher) {
+      this.$nextTick(() => {
+        this.isTouchmoving = true;
+      });
+    }
+    this._onEmit();
+    this.finalUseVirtualList && this._virtualListInit();
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this._getCssSafeAreaInsetBottom();
+      }, delay);
+    });
+  },
+  destroyed() {
+    this._offEmit();
+  },
+  unmounted() {
+    this._offEmit();
+  },
+  watch: {
+    defaultThemeStyle: {
+      handler(newVal) {
+        if (newVal.length) {
+          this.finalRefresherDefaultStyle = newVal;
+        }
+      },
+      immediate: true
+    },
+    autoHeight(newVal) {
+      this.loaded && !this.usePageScroll && this._setAutoHeight(newVal);
+    },
+    autoHeightAddition(newVal) {
+      this.loaded && !this.usePageScroll && this.autoHeight && this._setAutoHeight(newVal);
+    }
+  },
+  computed: {
+    finalPagingStyle() {
+      const pagingStyle = this.pagingStyle;
+      if (!this.systemInfo)
+        return pagingStyle;
+      const windowTop = this.windowTop;
+      const windowBottom = this.windowBottom;
+      if (!this.usePageScroll && this.fixed) {
+        if (windowTop && !pagingStyle.top) {
+          pagingStyle.top = windowTop + "px";
+        }
+        if (windowBottom && !pagingStyle.bottom) {
+          pagingStyle.bottom = windowBottom + "px";
+        }
+      }
+      if (this.bgColor.length && !pagingStyle["background"]) {
+        pagingStyle["background"] = this.bgColor;
+      }
+      if (this.height.length && !pagingStyle["height"]) {
+        pagingStyle["height"] = this.height;
+      }
+      if (this.width.length && !pagingStyle["width"]) {
+        pagingStyle["width"] = this.width;
+      }
+      return pagingStyle;
+    },
+    finalLowerThreshold() {
+      return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.convertToPx(this.lowerThreshold);
+    },
+    finalPagingContentStyle() {
+      if (this.contentZIndex != 1) {
+        this.pagingContentStyle["z-index"] = this.contentZIndex;
+        this.pagingContentStyle["position"] = "relative";
+      }
+      return this.pagingContentStyle;
+    },
+    safeAreaBottom() {
+      if (!this.systemInfo)
+        return 0;
+      let safeAreaBottom = 0;
+      safeAreaBottom = this.cssSafeAreaInsetBottom === -1 ? 0 : this.cssSafeAreaInsetBottom;
+      return safeAreaBottom;
+    },
+    renderJsIgnore() {
+      if (this.usePageScroll && this.useChatRecordMode || !this.refresherEnabled || !this.useCustomRefresher) {
+        this.$nextTick(() => {
+          this.renderPropScrollTop = 10;
+        });
+      }
+      return 0;
+    },
+    windowHeight() {
+      return !this.systemInfo ? 0 : this.systemInfo.windowHeight || 0;
+    },
+    windowTop() {
+      return !this.systemInfo ? 0 : this.systemInfo.windowTop || 0;
+    },
+    windowBottom() {
+      if (!this.systemInfo)
+        return 0;
+      let windowBottom = this.systemInfo.windowBottom || 0;
+      if (this.safeAreaInsetBottom && !this.useSafeAreaPlaceholder) {
+        windowBottom += this.safeAreaBottom;
+      }
+      return windowBottom;
+    },
+    isOldWebView() {
+      try {
+        const systemInfos = systemInfo.system.split(" ");
+        const deviceType = systemInfos[0];
+        const version = parseInt(systemInfos[1].slice(0, 1));
+        if (deviceType === "iOS" && version <= 10 || deviceType === "Android" && version <= 6) {
+          return true;
+        }
+      } catch (e) {
+        return false;
+      }
+      return false;
+    },
+    isIosAndH5() {
+      return false;
+    },
+    zSlots() {
+      return this.$slots;
+    }
+  },
+  methods: {
+    //当前版本号
+    getVersion() {
+      return `z-paging v${uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.version}`;
+    },
+    //设置nvue List的specialEffects
+    setSpecialEffects(args) {
+      this.setListSpecialEffects(args);
+    },
+    //与setSpecialEffects等效，兼容旧版本
+    setListSpecialEffects(args) {
+      this.nFixFreezing = args && Object.keys(args).length;
+      if (this.isIos) {
+        this.privateRefresherEnabled = 0;
+      }
+      if (!this.usePageScroll) {
+        this.$refs["zp-n-list"].setSpecialEffects(args);
+      }
+    },
+    //使手机发生较短时间的振动（15ms）
+    _doVibrateShort() {
+      common_vendor.index.vibrateShort();
+    },
+    //设置z-paging高度
+    async _setAutoHeight(shouldFullHeight = true, scrollViewNode = null) {
+      let heightKey = "min-height";
+      heightKey = "min-height";
+      try {
+        if (shouldFullHeight) {
+          let finalScrollViewNode = scrollViewNode ? scrollViewNode : await this._getNodeClientRect(".zp-scroll-view");
+          let finalScrollBottomNode = await this._getNodeClientRect(".zp-page-bottom");
+          if (finalScrollViewNode) {
+            const scrollViewTop = finalScrollViewNode[0].top;
+            let scrollViewHeight = this.windowHeight - scrollViewTop;
+            if (finalScrollBottomNode) {
+              scrollViewHeight -= finalScrollBottomNode[0].height;
+            }
+            const additionHeight = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.convertToPx(this.autoHeightAddition);
+            const finalHeight = scrollViewHeight + additionHeight - (this.insideMore ? 1 : 0) + "px !important";
+            this.$set(this.scrollViewStyle, heightKey, finalHeight);
+            this.$set(this.scrollViewInStyle, heightKey, finalHeight);
+          }
+        } else {
+          this.$delete(this.scrollViewStyle, heightKey);
+          this.$delete(this.scrollViewInStyle, heightKey);
+        }
+      } catch (e) {
+      }
+    },
+    //通过获取css设置的底部安全区域占位view高度设置bottom距离
+    _getCssSafeAreaInsetBottom() {
+      this._getNodeClientRect(".zp-safe-area-inset-bottom").then((res) => {
+        if (res) {
+          this.cssSafeAreaInsetBottom = res[0].height;
+          if (this.safeAreaInsetBottom) {
+            this.updatePageScrollBottomHeight();
+          }
+        }
+      });
+    },
+    //触发更新是否超出页面状态
+    _updateInsideOfPaging() {
+      if (this.insideMore && this.insideOfPaging === true) {
+        setTimeout(() => {
+          this.doLoadMore();
+        }, 200);
+      }
+    },
+    //获取节点尺寸
+    _getNodeClientRect(select, inDom = true, scrollOffset = false) {
+      let res = !!inDom ? common_vendor.index.createSelectorQuery().in(inDom === true ? this : inDom) : common_vendor.index.createSelectorQuery();
+      scrollOffset ? res.select(select).scrollOffset() : res.select(select).boundingClientRect();
+      return new Promise((resolve, reject) => {
+        res.exec((data) => {
+          resolve(data && data != "" && data != void 0 && data.length ? data : false);
+        });
+      });
+    },
+    //清除timeout
+    _cleanTimeout(timeout) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      return timeout;
+    },
+    //添加全局emit监听
+    _onEmit() {
+      common_vendor.index.$on(uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.errorUpdateKey, () => {
+        if (this.loading) {
+          this.complete(false);
+        }
+      });
+      common_vendor.index.$on(uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.completeUpdateKey, (data) => {
+        setTimeout(() => {
+          if (this.loading) {
+            if (!this.disabledCompleteEmit) {
+              const type = data.type || "normal";
+              const list = data.list || data;
+              const rule = data.rule;
+              this.fromCompleteEmit = true;
+              switch (type) {
+                case "normal":
+                  this.complete(list);
+                  break;
+                case "total":
+                  this.completeByTotal(list, rule);
+                  break;
+                case "nomore":
+                  this.completeByNoMore(list, rule);
+                  break;
+                case "key":
+                  this.completeByKey(list, rule);
+                  break;
+              }
+            } else {
+              this.disabledCompleteEmit = false;
+            }
+          }
+        }, 1);
+      });
+    },
+    //销毁全局emit和listener监听
+    _offEmit() {
+      common_vendor.index.$off(uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.errorUpdateKey);
+      common_vendor.index.$off(uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.completeUpdateKey);
+    }
+  }
+};
+exports._sfc_main = _sfc_main;

@@ -1,1 +1,412 @@
-"use strict";class M{constructor({date:t,selected:e,startDate:a,endDate:s,range:l}={}){this.date=this.getDate(new Date),this.selected=e||[],this.startDate=a,this.endDate=s,this.range=l,this.cleanMultipleStatus(),this.weeks={},this.lastHover=!1}setDate(t){this.selectDate=this.getDate(t),this._getWeek(this.selectDate.fullDate)}cleanMultipleStatus(){this.multipleStatus={before:"",after:"",data:[]}}resetSatrtDate(t){this.startDate=t}resetEndDate(t){this.endDate=t}getDate(t,e=0,a="day"){t||(t=new Date),typeof t!="object"&&(t=t.replace(/-/g,"/"));const s=new Date(t);switch(a){case"day":s.setDate(s.getDate()+e);break;case"month":if(s.getDate()===31&&e>0)s.setDate(s.getDate()+e);else{const n=s.getMonth();s.setMonth(n+e);const r=s.getMonth();e<0&&n!==0&&r-n>e&&s.setMonth(r+(r-n+e)),e>0&&r-n>e&&s.setMonth(r-(r-n-e))}break;case"year":s.setFullYear(s.getFullYear()+e);break}const l=s.getFullYear(),h=s.getMonth()+1<10?"0"+(s.getMonth()+1):s.getMonth()+1,c=s.getDate()<10?"0"+s.getDate():s.getDate();return{fullDate:l+"-"+h+"-"+c,year:l,month:h,date:c,day:s.getDay()}}_getLastMonthDays(t,e){let a=[];for(let s=t;s>0;s--){const l=new Date(e.year,e.month-1,-s+1).getDate();a.push({date:l,month:e.month-1,disable:!0})}return a}_currentMonthDys(t,e){let a=[],s=this.date.fullDate;for(let l=1;l<=t;l++){let h=e.year+"-"+(e.month<10,e.month)+"-"+(l<10?"0"+l:l),c=s===h,n=this.selected&&this.selected.find(D=>{if(this.dateEqual(h,D.date))return D}),r=!0,u=!0;this.startDate&&(r=this.dateCompare(this.startDate,h)),this.endDate&&(u=this.dateCompare(h,this.endDate));let p=this.multipleStatus.data,g=!1,o=-1;this.range&&(p&&(o=p.findIndex(D=>this.dateEqual(D,h))),o!==-1&&(g=!0));let m={fullDate:h,year:e.year,date:l,multiple:this.range?g:!1,beforeMultiple:this.isLogicBefore(h,this.multipleStatus.before,this.multipleStatus.after),afterMultiple:this.isLogicAfter(h,this.multipleStatus.before,this.multipleStatus.after),month:e.month,disable:!(r&&u),isDay:c,userChecked:!1};n&&(m.extraInfo=n),a.push(m)}return a}_getNextMonthDays(t,e){let a=[];for(let s=1;s<t+1;s++)a.push({date:s,month:Number(e.month)+1,disable:!0});return a}getInfo(t){return t||(t=new Date),this.canlender.find(a=>a.fullDate===this.getDate(t).fullDate)}dateCompare(t,e){return t=new Date(t.replace("-","/").replace("-","/")),e=new Date(e.replace("-","/").replace("-","/")),t<=e}dateEqual(t,e){return t=new Date(t.replace("-","/").replace("-","/")),e=new Date(e.replace("-","/").replace("-","/")),t.getTime()-e.getTime()===0}isLogicBefore(t,e,a){let s=e;return e&&a&&(s=this.dateCompare(e,a)?e:a),this.dateEqual(s,t)}isLogicAfter(t,e,a){let s=a;return e&&a&&(s=this.dateCompare(e,a)?a:e),this.dateEqual(s,t)}geDateAll(t,e){var a=[],s=t.split("-"),l=e.split("-"),h=new Date;h.setFullYear(s[0],s[1]-1,s[2]);var c=new Date;c.setFullYear(l[0],l[1]-1,l[2]);for(var n=h.getTime()-24*60*60*1e3,r=c.getTime()-24*60*60*1e3,u=n;u<=r;)u=u+24*60*60*1e3,a.push(this.getDate(new Date(parseInt(u))).fullDate);return a}setMultiple(t){let{before:e,after:a}=this.multipleStatus;if(this.range){if(e&&a){if(!this.lastHover){this.lastHover=!0;return}this.multipleStatus.before=t,this.multipleStatus.after="",this.multipleStatus.data=[],this.multipleStatus.fulldate="",this.lastHover=!1}else e?(this.multipleStatus.after=t,this.dateCompare(this.multipleStatus.before,this.multipleStatus.after)?this.multipleStatus.data=this.geDateAll(this.multipleStatus.before,this.multipleStatus.after):this.multipleStatus.data=this.geDateAll(this.multipleStatus.after,this.multipleStatus.before),this.lastHover=!0):(this.multipleStatus.before=t,this.lastHover=!1);this._getWeek(t)}}setHoverMultiple(t){let{before:e,after:a}=this.multipleStatus;this.range&&(this.lastHover||(e?(this.multipleStatus.after=t,this.dateCompare(this.multipleStatus.before,this.multipleStatus.after)?this.multipleStatus.data=this.geDateAll(this.multipleStatus.before,this.multipleStatus.after):this.multipleStatus.data=this.geDateAll(this.multipleStatus.after,this.multipleStatus.before)):this.multipleStatus.before=t,this._getWeek(t)))}setDefaultMultiple(t,e){this.multipleStatus.before=t,this.multipleStatus.after=e,t&&e&&(this.dateCompare(t,e)?(this.multipleStatus.data=this.geDateAll(t,e),this._getWeek(e)):(this.multipleStatus.data=this.geDateAll(e,t),this._getWeek(t)))}_getWeek(t){const{fullDate:e,year:a,month:s,date:l,day:h}=this.getDate(t);let c=new Date(a,s-1,1).getDay(),n=new Date(a,s,0).getDate(),r={lastMonthDays:this._getLastMonthDays(c,this.getDate(t)),currentMonthDys:this._currentMonthDys(n,this.getDate(t)),nextMonthDays:[],weeks:[]},u=[];const p=42-(r.lastMonthDays.length+r.currentMonthDys.length);r.nextMonthDays=this._getNextMonthDays(p,this.getDate(t)),u=u.concat(r.lastMonthDays,r.currentMonthDys,r.nextMonthDays);let g={};for(let o=0;o<u.length;o++)o%7===0&&(g[parseInt(o/7)]=new Array(7)),g[parseInt(o/7)][o%7]=u[o];this.canlender=u,this.weeks=g}}function y(i,t){return`${S(i)} ${d(i,t)}`}function S(i){i=i,i=new Date(i);const t=i.getFullYear(),e=i.getMonth()+1,a=i.getDate();return`${t}-${f(e)}-${f(a)}`}function d(i,t){i=i,i=new Date(i);const e=i.getHours(),a=i.getMinutes(),s=i.getSeconds();return t?`${f(e)}:${f(a)}`:`${f(e)}:${f(a)}:${f(s)}`}function f(i){return i<10&&(i=`0${i}`),i}function w(i){return i?"00:00":"00:00:00"}function b(i,t){return i=new Date(i.replace(/-/g,"/")),t=new Date(t.replace(/-/g,"/")),i<=t}function v(i){const t=/((19|20)\d{2})(-|\/)\d{1,2}(-|\/)\d{1,2}/g;return i.match(t)}function k(i){return i}exports.Calendar=M;exports.checkDate=v;exports.dateCompare=b;exports.fixIosDateFormat=k;exports.getDate=S;exports.getDateTime=y;exports.getDefaultSecond=w;exports.getTime=d;
+"use strict";
+class Calendar {
+  constructor({
+    date,
+    selected,
+    startDate,
+    endDate,
+    range
+    // multipleStatus
+  } = {}) {
+    this.date = this.getDate(/* @__PURE__ */ new Date());
+    this.selected = selected || [];
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.range = range;
+    this.cleanMultipleStatus();
+    this.weeks = {};
+    this.lastHover = false;
+  }
+  /**
+   * 设置日期
+   * @param {Object} date
+   */
+  setDate(date) {
+    this.selectDate = this.getDate(date);
+    this._getWeek(this.selectDate.fullDate);
+  }
+  /**
+   * 清理多选状态
+   */
+  cleanMultipleStatus() {
+    this.multipleStatus = {
+      before: "",
+      after: "",
+      data: []
+    };
+  }
+  /**
+   * 重置开始日期
+   */
+  resetSatrtDate(startDate) {
+    this.startDate = startDate;
+  }
+  /**
+   * 重置结束日期
+   */
+  resetEndDate(endDate) {
+    this.endDate = endDate;
+  }
+  /**
+   * 获取任意时间
+   */
+  getDate(date, AddDayCount = 0, str = "day") {
+    if (!date) {
+      date = /* @__PURE__ */ new Date();
+    }
+    if (typeof date !== "object") {
+      date = date.replace(/-/g, "/");
+    }
+    const dd = new Date(date);
+    switch (str) {
+      case "day":
+        dd.setDate(dd.getDate() + AddDayCount);
+        break;
+      case "month":
+        if (dd.getDate() === 31 && AddDayCount > 0) {
+          dd.setDate(dd.getDate() + AddDayCount);
+        } else {
+          const preMonth = dd.getMonth();
+          dd.setMonth(preMonth + AddDayCount);
+          const nextMonth = dd.getMonth();
+          if (AddDayCount < 0 && preMonth !== 0 && nextMonth - preMonth > AddDayCount) {
+            dd.setMonth(nextMonth + (nextMonth - preMonth + AddDayCount));
+          }
+          if (AddDayCount > 0 && nextMonth - preMonth > AddDayCount) {
+            dd.setMonth(nextMonth - (nextMonth - preMonth - AddDayCount));
+          }
+        }
+        break;
+      case "year":
+        dd.setFullYear(dd.getFullYear() + AddDayCount);
+        break;
+    }
+    const y = dd.getFullYear();
+    const m = dd.getMonth() + 1 < 10 ? "0" + (dd.getMonth() + 1) : dd.getMonth() + 1;
+    const d = dd.getDate() < 10 ? "0" + dd.getDate() : dd.getDate();
+    return {
+      fullDate: y + "-" + m + "-" + d,
+      year: y,
+      month: m,
+      date: d,
+      day: dd.getDay()
+    };
+  }
+  /**
+   * 获取上月剩余天数
+   */
+  _getLastMonthDays(firstDay, full) {
+    let dateArr = [];
+    for (let i = firstDay; i > 0; i--) {
+      const beforeDate = new Date(full.year, full.month - 1, -i + 1).getDate();
+      dateArr.push({
+        date: beforeDate,
+        month: full.month - 1,
+        disable: true
+      });
+    }
+    return dateArr;
+  }
+  /**
+   * 获取本月天数
+   */
+  _currentMonthDys(dateData, full) {
+    let dateArr = [];
+    let fullDate = this.date.fullDate;
+    for (let i = 1; i <= dateData; i++) {
+      let nowDate = full.year + "-" + (full.month < 10 ? full.month : full.month) + "-" + (i < 10 ? "0" + i : i);
+      let isDay = fullDate === nowDate;
+      let info = this.selected && this.selected.find((item) => {
+        if (this.dateEqual(nowDate, item.date)) {
+          return item;
+        }
+      });
+      let disableBefore = true;
+      let disableAfter = true;
+      if (this.startDate) {
+        disableBefore = this.dateCompare(this.startDate, nowDate);
+      }
+      if (this.endDate) {
+        disableAfter = this.dateCompare(nowDate, this.endDate);
+      }
+      let multiples = this.multipleStatus.data;
+      let checked = false;
+      let multiplesStatus = -1;
+      if (this.range) {
+        if (multiples) {
+          multiplesStatus = multiples.findIndex((item) => {
+            return this.dateEqual(item, nowDate);
+          });
+        }
+        if (multiplesStatus !== -1) {
+          checked = true;
+        }
+      }
+      let data = {
+        fullDate: nowDate,
+        year: full.year,
+        date: i,
+        multiple: this.range ? checked : false,
+        beforeMultiple: this.isLogicBefore(nowDate, this.multipleStatus.before, this.multipleStatus.after),
+        afterMultiple: this.isLogicAfter(nowDate, this.multipleStatus.before, this.multipleStatus.after),
+        month: full.month,
+        disable: !(disableBefore && disableAfter),
+        isDay,
+        userChecked: false
+      };
+      if (info) {
+        data.extraInfo = info;
+      }
+      dateArr.push(data);
+    }
+    return dateArr;
+  }
+  /**
+   * 获取下月天数
+   */
+  _getNextMonthDays(surplus, full) {
+    let dateArr = [];
+    for (let i = 1; i < surplus + 1; i++) {
+      dateArr.push({
+        date: i,
+        month: Number(full.month) + 1,
+        disable: true
+      });
+    }
+    return dateArr;
+  }
+  /**
+   * 获取当前日期详情
+   * @param {Object} date
+   */
+  getInfo(date) {
+    if (!date) {
+      date = /* @__PURE__ */ new Date();
+    }
+    const dateInfo = this.canlender.find((item) => item.fullDate === this.getDate(date).fullDate);
+    return dateInfo;
+  }
+  /**
+   * 比较时间大小
+   */
+  dateCompare(startDate, endDate) {
+    startDate = new Date(startDate.replace("-", "/").replace("-", "/"));
+    endDate = new Date(endDate.replace("-", "/").replace("-", "/"));
+    if (startDate <= endDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /**
+   * 比较时间是否相等
+   */
+  dateEqual(before, after) {
+    before = new Date(before.replace("-", "/").replace("-", "/"));
+    after = new Date(after.replace("-", "/").replace("-", "/"));
+    if (before.getTime() - after.getTime() === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /**
+   *  比较真实起始日期
+   */
+  isLogicBefore(currentDay, before, after) {
+    let logicBefore = before;
+    if (before && after) {
+      logicBefore = this.dateCompare(before, after) ? before : after;
+    }
+    return this.dateEqual(logicBefore, currentDay);
+  }
+  isLogicAfter(currentDay, before, after) {
+    let logicAfter = after;
+    if (before && after) {
+      logicAfter = this.dateCompare(before, after) ? after : before;
+    }
+    return this.dateEqual(logicAfter, currentDay);
+  }
+  /**
+   * 获取日期范围内所有日期
+   * @param {Object} begin
+   * @param {Object} end
+   */
+  geDateAll(begin, end) {
+    var arr = [];
+    var ab = begin.split("-");
+    var ae = end.split("-");
+    var db = /* @__PURE__ */ new Date();
+    db.setFullYear(ab[0], ab[1] - 1, ab[2]);
+    var de = /* @__PURE__ */ new Date();
+    de.setFullYear(ae[0], ae[1] - 1, ae[2]);
+    var unixDb = db.getTime() - 24 * 60 * 60 * 1e3;
+    var unixDe = de.getTime() - 24 * 60 * 60 * 1e3;
+    for (var k = unixDb; k <= unixDe; ) {
+      k = k + 24 * 60 * 60 * 1e3;
+      arr.push(this.getDate(new Date(parseInt(k))).fullDate);
+    }
+    return arr;
+  }
+  /**
+   *  获取多选状态
+   */
+  setMultiple(fullDate) {
+    let {
+      before,
+      after
+    } = this.multipleStatus;
+    if (!this.range)
+      return;
+    if (before && after) {
+      if (!this.lastHover) {
+        this.lastHover = true;
+        return;
+      }
+      this.multipleStatus.before = fullDate;
+      this.multipleStatus.after = "";
+      this.multipleStatus.data = [];
+      this.multipleStatus.fulldate = "";
+      this.lastHover = false;
+    } else {
+      if (!before) {
+        this.multipleStatus.before = fullDate;
+        this.lastHover = false;
+      } else {
+        this.multipleStatus.after = fullDate;
+        if (this.dateCompare(this.multipleStatus.before, this.multipleStatus.after)) {
+          this.multipleStatus.data = this.geDateAll(this.multipleStatus.before, this.multipleStatus.after);
+        } else {
+          this.multipleStatus.data = this.geDateAll(this.multipleStatus.after, this.multipleStatus.before);
+        }
+        this.lastHover = true;
+      }
+    }
+    this._getWeek(fullDate);
+  }
+  /**
+   *  鼠标 hover 更新多选状态
+   */
+  setHoverMultiple(fullDate) {
+    let {
+      before,
+      after
+    } = this.multipleStatus;
+    if (!this.range)
+      return;
+    if (this.lastHover)
+      return;
+    if (!before) {
+      this.multipleStatus.before = fullDate;
+    } else {
+      this.multipleStatus.after = fullDate;
+      if (this.dateCompare(this.multipleStatus.before, this.multipleStatus.after)) {
+        this.multipleStatus.data = this.geDateAll(this.multipleStatus.before, this.multipleStatus.after);
+      } else {
+        this.multipleStatus.data = this.geDateAll(this.multipleStatus.after, this.multipleStatus.before);
+      }
+    }
+    this._getWeek(fullDate);
+  }
+  /**
+   * 更新默认值多选状态
+   */
+  setDefaultMultiple(before, after) {
+    this.multipleStatus.before = before;
+    this.multipleStatus.after = after;
+    if (before && after) {
+      if (this.dateCompare(before, after)) {
+        this.multipleStatus.data = this.geDateAll(before, after);
+        this._getWeek(after);
+      } else {
+        this.multipleStatus.data = this.geDateAll(after, before);
+        this._getWeek(before);
+      }
+    }
+  }
+  /**
+   * 获取每周数据
+   * @param {Object} dateData
+   */
+  _getWeek(dateData) {
+    const {
+      fullDate,
+      year,
+      month,
+      date,
+      day
+    } = this.getDate(dateData);
+    let firstDay = new Date(year, month - 1, 1).getDay();
+    let currentDay = new Date(year, month, 0).getDate();
+    let dates = {
+      lastMonthDays: this._getLastMonthDays(firstDay, this.getDate(dateData)),
+      // 上个月末尾几天
+      currentMonthDys: this._currentMonthDys(currentDay, this.getDate(dateData)),
+      // 本月天数
+      nextMonthDays: [],
+      // 下个月开始几天
+      weeks: []
+    };
+    let canlender = [];
+    const surplus = 42 - (dates.lastMonthDays.length + dates.currentMonthDys.length);
+    dates.nextMonthDays = this._getNextMonthDays(surplus, this.getDate(dateData));
+    canlender = canlender.concat(dates.lastMonthDays, dates.currentMonthDys, dates.nextMonthDays);
+    let weeks = {};
+    for (let i = 0; i < canlender.length; i++) {
+      if (i % 7 === 0) {
+        weeks[parseInt(i / 7)] = new Array(7);
+      }
+      weeks[parseInt(i / 7)][i % 7] = canlender[i];
+    }
+    this.canlender = canlender;
+    this.weeks = weeks;
+  }
+}
+function getDateTime(date, hideSecond) {
+  return `${getDate(date)} ${getTime(date, hideSecond)}`;
+}
+function getDate(date) {
+  date = fixIosDateFormat(date);
+  date = new Date(date);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}-${addZero(month)}-${addZero(day)}`;
+}
+function getTime(date, hideSecond) {
+  date = fixIosDateFormat(date);
+  date = new Date(date);
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
+  return hideSecond ? `${addZero(hour)}:${addZero(minute)}` : `${addZero(hour)}:${addZero(minute)}:${addZero(second)}`;
+}
+function addZero(num) {
+  if (num < 10) {
+    num = `0${num}`;
+  }
+  return num;
+}
+function getDefaultSecond(hideSecond) {
+  return hideSecond ? "00:00" : "00:00:00";
+}
+function dateCompare(startDate, endDate) {
+  startDate = new Date(startDate.replace(/-/g, "/"));
+  endDate = new Date(endDate.replace(/-/g, "/"));
+  return startDate <= endDate;
+}
+function checkDate(date) {
+  const dateReg = /((19|20)\d{2})(-|\/)\d{1,2}(-|\/)\d{1,2}/g;
+  return date.match(dateReg);
+}
+function fixIosDateFormat(value) {
+  return value;
+}
+exports.Calendar = Calendar;
+exports.checkDate = checkDate;
+exports.dateCompare = dateCompare;
+exports.fixIosDateFormat = fixIosDateFormat;
+exports.getDate = getDate;
+exports.getDateTime = getDateTime;
+exports.getDefaultSecond = getDefaultSecond;
+exports.getTime = getTime;

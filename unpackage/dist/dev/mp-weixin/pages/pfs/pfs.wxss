@@ -1,1 +1,21 @@
-.pfs.data-v-0673e562{width:100%;min-height:100vh;overflow:hidden;background:url(http://zykjstore.oss-cn-chengdu.aliyuncs.com/upload/model/20230301_16776689413.png) no-repeat;background-position:top center;background-size:100% auto}.pfs .cont.data-v-0673e562{padding:0 24rpx 24rpx;overflow:hidden}.pfs .cont .common-ul.data-v-0673e562{height:100%;display:flex;flex-direction:column;background-color:transparent}.pfs .cont .common-ul .li.data-v-0673e562{background-color:#fff}
+.pfs.data-v-0673e562 {
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: url('http://zykjstore.oss-cn-chengdu.aliyuncs.com/upload/model/20230301_16776689413.png') no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+}
+.pfs .cont.data-v-0673e562 {
+  padding: 0 24rpx 24rpx;
+  overflow: hidden;
+}
+.pfs .cont .common-ul.data-v-0673e562 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+}
+.pfs .cont .common-ul .li.data-v-0673e562 {
+  background-color: #fff;
+}

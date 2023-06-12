@@ -1,1 +1,161 @@
-"use strict";const a=require("../../../../../common/vendor.js"),f=require("./z-paging-config.js"),s=require("../config/index.js"),l="Z-PAGING-REFRESHER-TIME-STORAGE-KEY";let i=null;function _(e,n){if(!i)if(s.zLocalConfig&&Object.keys(s.zLocalConfig).length)i=s.zLocalConfig;else{const o=f.zConfig.getConfig();f.zConfig&&o&&(i=o)}if(!i)return n;const t=i[Y(e)];return t===void 0?n:t}function $(e){let n=null;if(e.touches&&e.touches.length)n=e.touches[0];else if(e.changedTouches&&e.changedTouches.length)n=e.changedTouches[0];else if(e.datail&&e.datail!={})n=e.datail;else return{touchX:0,touchY:0};return{touchX:n.clientX,touchY:n.clientY}}function m(e){if(e&&e.tagName&&e.tagName!=="BODY"&&e.tagName!=="UNI-PAGE-BODY"){const n=e.classList;return n&&n.contains("z-paging-content")?{isFromZp:!0,isPageScroll:n.contains("z-paging-content-page"),isReachedTop:n.contains("z-paging-reached-top")}:m(e.parentNode)}else return{isFromZp:!1}}function d(e){return e?e.$refs.paging?e:d(e.$parent):null}function z(e){console.error(`[z-paging]${e}`)}function D(e,n){const t=h()||{};t[n]=e,a.index.setStorageSync(l,t)}function h(){return a.index.getStorageSync(l)}function F(e){const n=h();return n&&n[e]?n[e]:null}function N(e,n){const t=F(e),o=t?b(t,n):n.none;return`${n.title}${o}`}function P(e){if(Object.prototype.toString.call(e)==="[object Number]")return e;let t=!1;return e.indexOf("rpx")!==-1||e.indexOf("upx")!==-1?(e=e.replace("rpx","").replace("upx",""),t=!0):e.indexOf("px")!==-1&&(e=e.replace("px","")),isNaN(e)?0:Number(t?a.index.upx2px(e):e)}function p(){return new Date().getTime()}function S(){const e=[],n="0123456789abcdef";for(let t=0;t<10;t++)e[t]=n.substr(Math.floor(Math.random()*16),1);return e.join("")+p()}function b(e,n){const t=new Date(e),o=new Date,c=new Date(e).setHours(0,0,0,0),T=new Date().setHours(0,0,0,0),g=c-T;let u="";const y=C(t);return g===0?u=n.today:g===-864e5?u=n.yesterday:u=R(t,t.getFullYear()!==o.getFullYear()),`${u} ${y}`}function R(e,n=!0){const t=e.getFullYear(),o=e.getMonth()+1,c=e.getDate();return n?`${t}-${r(o)}-${r(c)}`:`${r(o)}-${r(c)}`}function C(e){const n=e.getHours(),t=e.getMinutes();return`${r(n)}:${r(t)}`}function r(e){return e=e.toString(),e.length===1?"0"+e:e}function Y(e){return e.replace(/([A-Z])/g,"-$1").toLowerCase()}const E={gc:_,setRefesrherTime:D,getRefesrherFormatTimeByKey:N,getTouch:$,getTouchFromZPaging:m,getParent:d,convertToPx:P,getTime:p,getInstanceId:S,consoleErr:z};exports.u=E;
+"use strict";
+const common_vendor = require("../../../../../common/vendor.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingConfig = require("./z-paging-config.js");
+const uni_modules_zPaging_components_zPaging_config_index = require("../config/index.js");
+const storageKey = "Z-PAGING-REFRESHER-TIME-STORAGE-KEY";
+let config = null;
+function gc(key, defaultValue) {
+  if (!config) {
+    if (uni_modules_zPaging_components_zPaging_config_index.zLocalConfig && Object.keys(uni_modules_zPaging_components_zPaging_config_index.zLocalConfig).length) {
+      config = uni_modules_zPaging_components_zPaging_config_index.zLocalConfig;
+    } else {
+      const temConfig = uni_modules_zPaging_components_zPaging_js_zPagingConfig.zConfig.getConfig();
+      if (uni_modules_zPaging_components_zPaging_js_zPagingConfig.zConfig && temConfig) {
+        config = temConfig;
+      }
+    }
+  }
+  if (!config)
+    return defaultValue;
+  const value = config[_toKebab(key)];
+  return value === void 0 ? defaultValue : value;
+}
+function getTouch(e) {
+  let touch = null;
+  if (e.touches && e.touches.length) {
+    touch = e.touches[0];
+  } else if (e.changedTouches && e.changedTouches.length) {
+    touch = e.changedTouches[0];
+  } else if (e.datail && e.datail != {}) {
+    touch = e.datail;
+  } else {
+    return {
+      touchX: 0,
+      touchY: 0
+    };
+  }
+  return {
+    touchX: touch.clientX,
+    touchY: touch.clientY
+  };
+}
+function getTouchFromZPaging(target) {
+  if (target && target.tagName && target.tagName !== "BODY" && target.tagName !== "UNI-PAGE-BODY") {
+    const classList = target.classList;
+    if (classList && classList.contains("z-paging-content")) {
+      return {
+        isFromZp: true,
+        isPageScroll: classList.contains("z-paging-content-page"),
+        isReachedTop: classList.contains("z-paging-reached-top")
+      };
+    } else {
+      return getTouchFromZPaging(target.parentNode);
+    }
+  } else {
+    return { isFromZp: false };
+  }
+}
+function getParent(parent) {
+  if (!parent)
+    return null;
+  if (parent.$refs.paging)
+    return parent;
+  return getParent(parent.$parent);
+}
+function consoleErr(err) {
+  console.error(`[z-paging]${err}`);
+}
+function setRefesrherTime(time, key) {
+  const datas = getRefesrherTime() || {};
+  datas[key] = time;
+  common_vendor.index.setStorageSync(storageKey, datas);
+}
+function getRefesrherTime() {
+  return common_vendor.index.getStorageSync(storageKey);
+}
+function getRefesrherTimeByKey(key) {
+  const datas = getRefesrherTime();
+  return datas && datas[key] ? datas[key] : null;
+}
+function getRefesrherFormatTimeByKey(key, textMap) {
+  const time = getRefesrherTimeByKey(key);
+  const timeText = time ? _timeFormat(time, textMap) : textMap.none;
+  return `${textMap.title}${timeText}`;
+}
+function convertToPx(text) {
+  const dataType = Object.prototype.toString.call(text);
+  if (dataType === "[object Number]")
+    return text;
+  let isRpx = false;
+  if (text.indexOf("rpx") !== -1 || text.indexOf("upx") !== -1) {
+    text = text.replace("rpx", "").replace("upx", "");
+    isRpx = true;
+  } else if (text.indexOf("px") !== -1) {
+    text = text.replace("px", "");
+  }
+  if (!isNaN(text)) {
+    if (isRpx)
+      return Number(common_vendor.index.upx2px(text));
+    return Number(text);
+  }
+  return 0;
+}
+function getTime() {
+  return (/* @__PURE__ */ new Date()).getTime();
+}
+function getInstanceId() {
+  const s = [];
+  const hexDigits = "0123456789abcdef";
+  for (let i = 0; i < 10; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 16), 1);
+  }
+  return s.join("") + getTime();
+}
+function _timeFormat(time, textMap) {
+  const date = new Date(time);
+  const currentDate = /* @__PURE__ */ new Date();
+  const dateDay = new Date(time).setHours(0, 0, 0, 0);
+  const currentDateDay = (/* @__PURE__ */ new Date()).setHours(0, 0, 0, 0);
+  const disTime = dateDay - currentDateDay;
+  let dayStr = "";
+  const timeStr = _dateTimeFormat(date);
+  if (disTime === 0) {
+    dayStr = textMap.today;
+  } else if (disTime === -864e5) {
+    dayStr = textMap.yesterday;
+  } else {
+    dayStr = _dateDayFormat(date, date.getFullYear() !== currentDate.getFullYear());
+  }
+  return `${dayStr} ${timeStr}`;
+}
+function _dateDayFormat(date, showYear = true) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return showYear ? `${year}-${_fullZeroToTwo(month)}-${_fullZeroToTwo(day)}` : `${_fullZeroToTwo(month)}-${_fullZeroToTwo(day)}`;
+}
+function _dateTimeFormat(date) {
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  return `${_fullZeroToTwo(hour)}:${_fullZeroToTwo(minute)}`;
+}
+function _fullZeroToTwo(str) {
+  str = str.toString();
+  return str.length === 1 ? "0" + str : str;
+}
+function _toKebab(value) {
+  return value.replace(/([A-Z])/g, "-$1").toLowerCase();
+}
+const u = {
+  gc,
+  setRefesrherTime,
+  getRefesrherFormatTimeByKey,
+  getTouch,
+  getTouchFromZPaging,
+  getParent,
+  convertToPx,
+  getTime,
+  getInstanceId,
+  consoleErr
+};
+exports.u = u;

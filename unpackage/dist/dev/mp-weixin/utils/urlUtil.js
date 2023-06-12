@@ -1,1 +1,72 @@
-"use strict";const n=require("./request.js");function u(e){return e==""||e===void 0||e===null||e.length===0?"":e.indexOf("https://")!=-1||e.indexOf("http://")!=-1?f(e+""):e.startsWith("/")?f(n.HOST_IMG+e):f(n.HOST_IMG+"/"+e)}function r(e){return e==""||e===void 0||e===null?"":e.indexOf("https://")!=-1||e.indexOf("http://")!=-1?e+"":e.startsWith("/")?n.HOST_IMG+e:n.HOST_IMG+"/"+e}function f(e){if(e!=null){var i=e.indexOf("?");return i>=0?e+"&x-oss-process=image/resize,h_500,w_500":e+"?x-oss-process=image/resize,h_500,w_500"}return e}function s(e){if(e){var i=e.indexOf(".");if(i>=0){let t=e.substring(e.lastIndexOf("."));return t===".mp4"||t===".m4v"||t===".3gp"||t===".rmvb"||t===".rm"||t===".mpg"||t===".mpeg"||t===".mpe"||t===".avi"||t===".dat"||t===".mkv"||t===".flv"||t===".vob"||t===".wmv"||t===".asf"||t===".asx"}else return!1}else return!1}function l(e){return e==""||e===void 0||e===null?"":e.indexOf("https://")!=-1||e.indexOf("http://")!=-1?e+"":"http://"+e}const d={getImgUrl:u,getImgUrlNotSize:r,isVideo:s,getFullUrl:l};exports.urlUtil=d;
+"use strict";
+const utils_request = require("./request.js");
+function getImgUrl(src) {
+  if (src == "" || src === void 0 || src === null || src.length === 0) {
+    return "";
+  } else if (src.indexOf("https://") != -1 || src.indexOf("http://") != -1) {
+    return appendImageSize(src + "");
+  } else if (!src.startsWith("/")) {
+    return appendImageSize(utils_request.HOST_IMG + "/" + src);
+  } else {
+    return appendImageSize(utils_request.HOST_IMG + src);
+  }
+}
+function getImgUrlNotSize(src) {
+  if (src == "" || src === void 0 || src === null) {
+    return "";
+  } else if (src.indexOf("https://") != -1 || src.indexOf("http://") != -1) {
+    return src + "";
+  } else if (!src.startsWith("/")) {
+    return utils_request.HOST_IMG + "/" + src;
+  } else {
+    return utils_request.HOST_IMG + src;
+  }
+}
+function appendImageSize(imgUrl) {
+  if (imgUrl != null) {
+    var index = imgUrl.indexOf("?");
+    if (index >= 0) {
+      return imgUrl + "&x-oss-process=image/resize,h_500,w_500";
+    } else {
+      return imgUrl + "?x-oss-process=image/resize,h_500,w_500";
+    }
+  }
+  return imgUrl;
+}
+function isVideo(url) {
+  if (url) {
+    var index = url.indexOf(".");
+    if (index >= 0) {
+      let fileValueSuffix = url.substring(url.lastIndexOf("."));
+      if (fileValueSuffix === ".mp4" || fileValueSuffix === ".m4v" || fileValueSuffix === ".3gp" || //rm、 rmvb
+      fileValueSuffix === ".rmvb" || fileValueSuffix === ".rm" || //mpg、mpeg、mpe
+      fileValueSuffix === ".mpg" || fileValueSuffix === ".mpeg" || fileValueSuffix === ".mpe" || //avi、dat、mkv、flv、vob
+      fileValueSuffix === ".avi" || fileValueSuffix === ".dat" || fileValueSuffix === ".mkv" || fileValueSuffix === ".flv" || fileValueSuffix === ".vob" || //wmv、asf、asx
+      fileValueSuffix === ".wmv" || fileValueSuffix === ".asf" || fileValueSuffix === ".asx") {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+function getFullUrl(url) {
+  if (url == "" || url === void 0 || url === null) {
+    return "";
+  } else if (url.indexOf("https://") != -1 || url.indexOf("http://") != -1) {
+    return url + "";
+  } else {
+    return "http://" + url;
+  }
+}
+const urlUtil = {
+  getImgUrl,
+  getImgUrlNotSize,
+  isVideo,
+  getFullUrl
+};
+exports.urlUtil = urlUtil;

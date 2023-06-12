@@ -1,1 +1,15 @@
-"use strict";const s=require("../common/vendor.js");function n(o){s.index.setClipboardData({data:o+"",showToast:!1,success:function(){console.log("success")},fail:()=>{console.log("fail")}})}exports.copyContent=n;
+"use strict";
+const common_vendor = require("../common/vendor.js");
+function copyContent(content) {
+  common_vendor.index.setClipboardData({
+    data: content + "",
+    showToast: false,
+    success: function() {
+      console.log("success");
+    },
+    fail: () => {
+      console.log("fail");
+    }
+  });
+}
+exports.copyContent = copyContent;

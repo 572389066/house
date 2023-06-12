@@ -1,1 +1,182 @@
-"use strict";const u=require("../common/vendor.js"),p=require("./cache.js"),f="https://zykjstore.oss-cn-chengdu.aliyuncs.com";let d="";d="https://houseapi.cqsoftware.cn";function h(o,e){let a=p.cache.getToken(),i={"content-type":"application/x-www-form-urlencoded"};return a&&a.length>0&&(i.uid=a),new Promise((t,s)=>{u.index.request({url:d+o,data:e,header:i,method:"POST",success:n=>{let c=n.data;c.code===1?t(c.return):(s(c),l(c))},fail:n=>{n&&n.response&&(s(n.response),l(n.response))}})})}function r(o,e){return new Promise((a,i)=>{u.index.request({url:d+o,data:e,header:{"content-type":"application/x-www-form-urlencoded"},method:"POST",success:t=>{let s=t.data;s.code===1?a(s.return):(i(s),l(s))},fail:t=>{t&&t.response&&(i(t),l(t.response))}})})}function m(o,e={}){let a=p.cache.getToken(),i={Accept:"application/json","Content-Type":"application/x-www-form-urlencoded"};return a&&a.length>0&&(i.uid=a),new Promise((t,s)=>{u.index.request({url:d+o,data:e,header:i,method:"GET",success:n=>{let c=n.data;c.code==1?t(c.return):(s(c),l(c))},fail:n=>{console.log("get request fail: "+JSON.stringify(n)),n&&n.response&&(s(n.response),l(n.response))}})})}function g(o,e){return new Promise((a,i)=>{u.index.uploadFile({url:d+o,filePath:e,name:"file",formData:{},success:t=>{let s=JSON.parse(t.data);s.code===1?a(s.return):(i(s),l(s))},fail:t=>{t&&t.response&&(i(t),l(t.response))}})})}const l=o=>{let e="";if(o.msg&&o.msg!="")e=o.msg;else switch(o.code){case 300:e="未授权，请登录";break;case 400:e="请求参数错误";break;case 403:e="跨域拒绝访问";break;case 404:e="请求地址不存在";break;case 500:e="服务器内部错误";break;case 504:e="请求超时";break;default:e="请求失败";break}u.index.showToast({title:e,icon:"none",duration:3e3,complete:function(){setTimeout(function(){u.index.hideToast()},3e3)}}),o.code==300&&setTimeout(function(){w()},500)};function w(){p.cache.saveToken(""),u.index.navigateTo({url:"/pages/login/login"})}exports.HOST_IMG=f;exports.get=m;exports.post=h;exports.postWithoutToken=r;exports.upload=g;
+"use strict";
+const common_vendor = require("../common/vendor.js");
+const utils_cache = require("./cache.js");
+const HOST_IMG = "https://zykjstore.oss-cn-chengdu.aliyuncs.com";
+let baseURL = "";
+{
+  baseURL = "https://houseapi.cqsoftware.cn";
+}
+function post(url, params) {
+  let token = utils_cache.cache.getToken();
+  let header = {
+    "content-type": "application/x-www-form-urlencoded"
+  };
+  if (token && token.length > 0) {
+    header["uid"] = token;
+  }
+  return new Promise((resolve, reject) => {
+    common_vendor.index.request({
+      url: baseURL + url,
+      data: params,
+      header,
+      method: "POST",
+      success: (response) => {
+        let res = response.data;
+        if (res.code === 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        if (error && error.response) {
+          reject(error.response);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+function postWithoutToken(url, params) {
+  return new Promise((resolve, reject) => {
+    common_vendor.index.request({
+      url: baseURL + url,
+      data: params,
+      header: {
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      method: "POST",
+      success: (response) => {
+        let res = response.data;
+        if (res.code === 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        if (error && error.response) {
+          reject(error);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+function get(url, params = {}) {
+  let token = utils_cache.cache.getToken();
+  let header = {
+    "Accept": "application/json",
+    "Content-Type": "application/x-www-form-urlencoded"
+  };
+  if (token && token.length > 0) {
+    header["uid"] = token;
+  }
+  return new Promise((resolve, reject) => {
+    common_vendor.index.request({
+      url: baseURL + url,
+      data: params,
+      header,
+      method: "GET",
+      success: (response) => {
+        let res = response.data;
+        if (res.code == 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        console.log("get request fail: " + JSON.stringify(error));
+        if (error && error.response) {
+          reject(error.response);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+function upload(url, filePath) {
+  return new Promise((resolve, reject) => {
+    common_vendor.index.uploadFile({
+      url: baseURL + url,
+      filePath,
+      name: "file",
+      formData: {},
+      success: (response) => {
+        let res = JSON.parse(response.data);
+        if (res.code === 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        if (error && error.response) {
+          reject(error);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+const showError = (error) => {
+  let errorMsg = "";
+  if (error.msg && error.msg != "") {
+    errorMsg = error.msg;
+  } else {
+    switch (error.code) {
+      case 300:
+        errorMsg = "未授权，请登录";
+        break;
+      case 400:
+        errorMsg = "请求参数错误";
+        break;
+      case 403:
+        errorMsg = "跨域拒绝访问";
+        break;
+      case 404:
+        errorMsg = "请求地址不存在";
+        break;
+      case 500:
+        errorMsg = "服务器内部错误";
+        break;
+      case 504:
+        errorMsg = "请求超时";
+        break;
+      default:
+        errorMsg = "请求失败";
+        break;
+    }
+  }
+  common_vendor.index.showToast({
+    title: errorMsg,
+    icon: "none",
+    duration: 3e3,
+    complete: function() {
+      setTimeout(function() {
+        common_vendor.index.hideToast();
+      }, 3e3);
+    }
+  });
+  if (error.code == 300) {
+    setTimeout(function() {
+      onTokenInvalid();
+    }, 500);
+  }
+};
+function onTokenInvalid() {
+  utils_cache.cache.saveToken("");
+  common_vendor.index.navigateTo({
+    url: "/pages/login/login"
+  });
+}
+exports.HOST_IMG = HOST_IMG;
+exports.get = get;
+exports.post = post;
+exports.postWithoutToken = postWithoutToken;
+exports.upload = upload;

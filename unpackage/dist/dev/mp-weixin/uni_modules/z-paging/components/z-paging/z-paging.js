@@ -1,1 +1,289 @@
-"use strict";const s=require("./js/z-paging-main.js"),o=require("../../../../common/vendor.js");require("./js/z-paging-static.js");require("./js/z-paging-constant.js");require("./js/z-paging-utils.js");require("./js/z-paging-config.js");require("./config/index.js");require("./js/modules/data-handle.js");require("./js/z-paging-enum.js");require("./js/z-paging-interceptor.js");require("./js/modules/i18n.js");require("./i18n/index.js");require("./js/modules/nvue.js");require("./js/modules/empty.js");require("./js/modules/refresher.js");require("./js/modules/load-more.js");require("./js/modules/loading.js");require("./js/modules/scroller.js");require("./js/modules/back-to-top.js");require("./js/modules/virtual-list.js");const h=e=>{e.wxsCallMethods||(e.wxsCallMethods=[]),e.wxsCallMethods.push("_handleListTouchstart","_handleRefresherTouchstart","_handleTouchDirectionChange","_handleScrollViewDisableBounce","_handleWxsPullingDown","_handleRefresherTouchmove","_handleRefresherTouchend","_handlePropUpdate","_handleWxsPullingDownStatusChange")},d={};if(!Array){const e=o.resolveComponent("z-paging-refresh"),i=o.resolveComponent("z-paging-load-more"),n=o.resolveComponent("z-paging-empty-view");(e+i+n)()}const p=()=>"../z-paging-empty-view/z-paging-empty-view.js";Math||p();function f(e,i,n,m,t,S){return o.e({a:e.cssSafeAreaInsetBottom===-1},e.cssSafeAreaInsetBottom===-1?{}:{},{b:!e.usePageScroll&&e.zSlots.top},!e.usePageScroll&&e.zSlots.top?{}:e.usePageScroll&&e.zSlots.top?{d:o.s({top:`${e.windowTop}px`,"z-index":e.topZIndex})}:{},{c:e.usePageScroll&&e.zSlots.top,e:e.zSlots.left},e.zSlots.left?{f:e.finalIsOldWebView?1:""}:{},{g:e.finalRefresherFixedBacHeight>0},e.finalRefresherFixedBacHeight>0?{h:o.s({background:e.refresherFixedBackground,height:`${e.finalRefresherFixedBacHeight}px`})}:{},{i:e.showRefresher},e.showRefresher?o.e({j:!(e.zSlots.refresherComplete&&e.refresherStatus===e.R.Complete)},e.zSlots.refresherComplete&&e.refresherStatus===e.R.Complete?{}:{k:o.r("refresher",{refresherStatus:e.refresherStatus})},{l:e.zSlots.refresherComplete&&e.refresherStatus===e.R.Complete},e.zSlots.refresherComplete&&e.refresherStatus===e.R.Complete?{}:e.showCustomRefresher?{}:{n:o.sr("refresh","1aa372d7-0"),o:o.s({height:`${e.finalRefresherThreshold}px`}),p:o.p({status:e.refresherStatus,defaultThemeStyle:e.finalRefresherThemeStyle,defaultText:e.finalRefresherDefaultText,pullingText:e.finalRefresherPullingText,refreshingText:e.finalRefresherRefreshingText,completeText:e.finalRefresherCompleteText,defaultImg:e.refresherDefaultImg,pullingImg:e.refresherPullingImg,refreshingImg:e.refresherRefreshingImg,completeImg:e.refresherCompleteImg,showUpdateTime:e.showRefresherUpdateTime,updateTimeKey:e.refresherUpdateTimeKey,updateTimeTextMap:e.finalRefresherUpdateTimeTextMap,imgStyle:e.refresherImgStyle,titleStyle:e.refresherTitleStyle,updateTimeStyle:e.refresherUpdateTimeStyle})},{m:!e.showCustomRefresher,q:o.s({height:`${e.finalRefresherThreshold}px`,background:e.refresherBackground}),r:o.s({"margin-top":`-${e.finalRefresherThreshold}px`,background:e.refresherBackground,opacity:e.isTouchmoving?1:0})}):{},{s:e.useChatRecordMode&&e.zSlots.chatLoading&&e.loadingStatus!==e.M.NoMore&&e.realTotalData.length},e.useChatRecordMode&&e.zSlots.chatLoading&&e.loadingStatus!==e.M.NoMore&&e.realTotalData.length?{}:e.useChatRecordMode&&e.loadingStatus!==e.M.NoMore&&e.realTotalData.length?o.e({v:e.loadingStatus!==e.M.Loading},e.loadingStatus!==e.M.Loading?{w:o.t(e.chatRecordLoadingMoreText),x:o.o((...r)=>e._onScrollToUpper&&e._onScrollToUpper(...r)),y:o.n(e.defaultThemeStyle==="white"?"zp-loading-more-text zp-loading-more-text-white":"zp-loading-more-text zp-loading-more-text-black")}:{z:e.base64Flower}):{},{t:e.useChatRecordMode&&e.loadingStatus!==e.M.NoMore&&e.realTotalData.length,A:e.showLoading&&e.zSlots.loading&&!e.loadingFullFixed},e.showLoading&&e.zSlots.loading&&!e.loadingFullFixed?{}:{},{B:e.finalUseInnerList},e.finalUseInnerList?o.e({C:e.finalUseVirtualList},e.finalUseVirtualList?{D:o.f(e.virtualList,(r,a,l)=>o.e(e.useCompatibilityMode?{}:{a:"cell-"+l,b:o.r("cell",{item:r,index:e.virtualTopRangeIndex+a},l)},{c:`zp-id-${r.zp_index}`,d:r.zp_unique_index,e:o.o(g=>e._innerCellClick(r,e.virtualTopRangeIndex+a),r.zp_unique_index)})),E:e.useCompatibilityMode,F:o.s(e.innerCellStyle)}:{G:o.f(e.realTotalData,(r,a,l)=>({a:"cell-"+l,b:o.r("cell",{item:r,index:a},l),c:a,d:o.o(g=>e._innerCellClick(r,a),a)}))},{H:o.s(e.innerListStyle)}):{},{I:e.useVirtualList},e.useVirtualList?{J:o.s({height:e.virtualPlaceholderBottomHeight+"px"})}:{},{K:e.showLoadingMoreDefault},e.showLoadingMoreDefault?{}:e.showLoadingMoreLoading?{}:e.showLoadingMoreNoMore?{}:e.showLoadingMoreFail?{}:e.showLoadingMoreCustom?{P:o.o(r=>e._onLoadingMore("click")),Q:o.p({zConfig:e.zLoadMoreConfig})}:{},{L:e.showLoadingMoreLoading,M:e.showLoadingMoreNoMore,N:e.showLoadingMoreFail,O:e.showLoadingMoreCustom,R:e.safeAreaInsetBottom&&e.useSafeAreaPlaceholder},e.safeAreaInsetBottom&&e.useSafeAreaPlaceholder?{S:o.s({height:e.safeAreaBottom+"px"})}:{},{T:o.s({transform:e.virtualPlaceholderTopHeight>0?`translateY(${e.virtualPlaceholderTopHeight}px)`:"none"}),U:o.s(e.finalPagingContentStyle),V:e.showEmpty},e.showEmpty?o.e({W:e.zSlots.empty},e.zSlots.empty?{X:o.r("empty",{isLoadFailed:e.isLoadFailed})}:{Y:o.o(e._emptyViewReload),Z:o.o(e._emptyViewClick),aa:o.p({emptyViewImg:e.finalEmptyViewImg,emptyViewText:e.finalEmptyViewText,showEmptyViewReload:e.finalShowEmptyViewReload,emptyViewReloadText:e.finalEmptyViewReloadText,isLoadFailed:e.isLoadFailed,emptyViewStyle:e.emptyViewStyle,emptyViewTitleStyle:e.emptyViewTitleStyle,emptyViewImgStyle:e.emptyViewImgStyle,emptyViewReloadStyle:e.emptyViewReloadStyle,emptyViewZIndex:e.emptyViewZIndex,emptyViewFixed:e.emptyViewFixed})},{ab:e.emptyViewCenter?1:"",ac:o.s({emptyViewSuperStyle:e.emptyViewSuperStyle})}):{},{ad:o.s(e.scrollViewInStyle),ae:o.s({transform:e.finalRefresherTransform,transition:e.refresherTransition}),af:e.wxsPropType,ag:e.finalRefresherThreshold,ah:e.isIos,ai:e.loading||e.isRefresherInComplete,aj:e.useChatRecordMode,ak:e.refresherEnabled,al:e.useCustomRefresher,am:e.wxsPageScrollTop,an:e.wxsScrollTop,ao:e.refresherMaxAngle,ap:e.refresherAngleEnableChangeContinued,aq:e.usePageScroll,ar:e.watchTouchDirectionChange,as:e.isTouchmoving,at:e.finalRefresherOutRate,av:e.finalRefresherPullRate,aw:e.hasTouchmove,ax:e.usePageScroll?"":1,ay:e.showScrollbar?"":1,az:e.scrollTop,aA:e.scrollX,aB:e.scrollable&&!e.usePageScroll&&e.scrollEnable&&(e.refresherCompleteScrollable?!0:e.refresherStatus!==e.R.Complete),aC:e.finalEnableBackToTop,aD:e.showScrollbar,aE:e.finalScrollWithAnimation,aF:e.scrollIntoView,aG:e.finalLowerThreshold,aH:e.finalRefresherEnabled&&!e.useCustomRefresher,aI:e.finalRefresherThreshold,aJ:e.finalRefresherDefaultStyle,aK:e.refresherBackground,aL:e.finalRefresherTriggered,aM:o.o((...r)=>e._scroll&&e._scroll(...r)),aN:o.o((...r)=>e._onScrollToLower&&e._onScrollToLower(...r)),aO:o.o((...r)=>e._onScrollToUpper&&e._onScrollToUpper(...r)),aP:o.o((...r)=>e._onRestore&&e._onRestore(...r)),aQ:o.o(r=>e._onRefresh(!0)),aR:e.finalIsOldWebView?1:"",aS:o.s(e.scrollViewContainerStyle),aT:e.zSlots.right},e.zSlots.right?{aU:e.finalIsOldWebView?1:""}:{},{aV:e.usePageScroll?"":1,aW:o.s(e.finalScrollViewStyle),aX:!e.usePageScroll&&e.zSlots.bottom},!e.usePageScroll&&e.zSlots.bottom?{}:e.usePageScroll&&e.zSlots.bottom?{aZ:o.s({bottom:`${e.windowBottom}px`})}:{},{aY:e.usePageScroll&&e.zSlots.bottom,ba:e.showBackToTopClass},e.showBackToTopClass?o.e({bb:e.zSlots.backToTop},e.zSlots.backToTop?{}:{bc:e.backToTopImg.length?e.backToTopImg:e.base64BackToTop},{bd:o.n(e.backToTopClass),be:o.s(e.finalBackToTopStyle),bf:o.o((...r)=>e._backToTopClick&&e._backToTopClick(...r))}):{},{bg:e.showLoading&&e.zSlots.loading&&e.loadingFullFixed},e.showLoading&&e.zSlots.loading&&e.loadingFullFixed?{}:{},{bh:!e.usePageScroll&&e.fixed?1:"",bi:e.usePageScroll?1:"",bj:e.renderPropScrollTop<1?1:"",bk:o.s(e.finalPagingStyle)})}typeof h=="function"&&h(s._sfc_main);typeof d=="function"&&d(s._sfc_main);const u=o._export_sfc(s._sfc_main,[["render",f],["__scopeId","data-v-1aa372d7"],["__file","D:/HBuilderProjects/house/uni_modules/z-paging/components/z-paging/z-paging.vue"]]);wx.createComponent(u);
+"use strict";
+const uni_modules_zPaging_components_zPaging_js_zPagingMain = require("./js/z-paging-main.js");
+const common_vendor = require("../../../../common/vendor.js");
+require("./js/z-paging-static.js");
+require("./js/z-paging-constant.js");
+require("./js/z-paging-utils.js");
+require("./js/z-paging-config.js");
+require("./config/index.js");
+require("./js/modules/data-handle.js");
+require("./js/z-paging-enum.js");
+require("./js/z-paging-interceptor.js");
+require("./js/modules/i18n.js");
+require("./i18n/index.js");
+require("./js/modules/nvue.js");
+require("./js/modules/empty.js");
+require("./js/modules/refresher.js");
+require("./js/modules/load-more.js");
+require("./js/modules/loading.js");
+require("./js/modules/scroller.js");
+require("./js/modules/back-to-top.js");
+require("./js/modules/virtual-list.js");
+const block0 = (Component2) => {
+  if (!Component2.wxsCallMethods) {
+    Component2.wxsCallMethods = [];
+  }
+  Component2.wxsCallMethods.push("_handleListTouchstart", "_handleRefresherTouchstart", "_handleTouchDirectionChange", "_handleScrollViewDisableBounce", "_handleWxsPullingDown", "_handleRefresherTouchmove", "_handleRefresherTouchend", "_handlePropUpdate", "_handleWxsPullingDownStatusChange");
+};
+const block1 = {};
+if (!Array) {
+  const _component_z_paging_refresh = common_vendor.resolveComponent("z-paging-refresh");
+  const _component_z_paging_load_more = common_vendor.resolveComponent("z-paging-load-more");
+  const _easycom_z_paging_empty_view2 = common_vendor.resolveComponent("z-paging-empty-view");
+  (_component_z_paging_refresh + _component_z_paging_load_more + _easycom_z_paging_empty_view2)();
+}
+const _easycom_z_paging_empty_view = () => "../z-paging-empty-view/z-paging-empty-view.js";
+if (!Math) {
+  _easycom_z_paging_empty_view();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return common_vendor.e({
+    a: _ctx.cssSafeAreaInsetBottom === -1
+  }, _ctx.cssSafeAreaInsetBottom === -1 ? {} : {}, {
+    b: !_ctx.usePageScroll && _ctx.zSlots.top
+  }, !_ctx.usePageScroll && _ctx.zSlots.top ? {} : _ctx.usePageScroll && _ctx.zSlots.top ? {
+    d: common_vendor.s({
+      "top": `${_ctx.windowTop}px`,
+      "z-index": _ctx.topZIndex
+    })
+  } : {}, {
+    c: _ctx.usePageScroll && _ctx.zSlots.top,
+    e: _ctx.zSlots.left
+  }, _ctx.zSlots.left ? {
+    f: _ctx.finalIsOldWebView ? 1 : ""
+  } : {}, {
+    g: _ctx.finalRefresherFixedBacHeight > 0
+  }, _ctx.finalRefresherFixedBacHeight > 0 ? {
+    h: common_vendor.s({
+      "background": _ctx.refresherFixedBackground,
+      "height": `${_ctx.finalRefresherFixedBacHeight}px`
+    })
+  } : {}, {
+    i: _ctx.showRefresher
+  }, _ctx.showRefresher ? common_vendor.e({
+    j: !(_ctx.zSlots.refresherComplete && _ctx.refresherStatus === _ctx.R.Complete)
+  }, !(_ctx.zSlots.refresherComplete && _ctx.refresherStatus === _ctx.R.Complete) ? {
+    k: common_vendor.r("refresher", {
+      refresherStatus: _ctx.refresherStatus
+    })
+  } : {}, {
+    l: _ctx.zSlots.refresherComplete && _ctx.refresherStatus === _ctx.R.Complete
+  }, _ctx.zSlots.refresherComplete && _ctx.refresherStatus === _ctx.R.Complete ? {} : !_ctx.showCustomRefresher ? {
+    n: common_vendor.sr("refresh", "1aa372d7-0"),
+    o: common_vendor.s({
+      "height": `${_ctx.finalRefresherThreshold}px`
+    }),
+    p: common_vendor.p({
+      status: _ctx.refresherStatus,
+      defaultThemeStyle: _ctx.finalRefresherThemeStyle,
+      defaultText: _ctx.finalRefresherDefaultText,
+      pullingText: _ctx.finalRefresherPullingText,
+      refreshingText: _ctx.finalRefresherRefreshingText,
+      completeText: _ctx.finalRefresherCompleteText,
+      defaultImg: _ctx.refresherDefaultImg,
+      pullingImg: _ctx.refresherPullingImg,
+      refreshingImg: _ctx.refresherRefreshingImg,
+      completeImg: _ctx.refresherCompleteImg,
+      showUpdateTime: _ctx.showRefresherUpdateTime,
+      updateTimeKey: _ctx.refresherUpdateTimeKey,
+      updateTimeTextMap: _ctx.finalRefresherUpdateTimeTextMap,
+      imgStyle: _ctx.refresherImgStyle,
+      titleStyle: _ctx.refresherTitleStyle,
+      updateTimeStyle: _ctx.refresherUpdateTimeStyle
+    })
+  } : {}, {
+    m: !_ctx.showCustomRefresher,
+    q: common_vendor.s({
+      "height": `${_ctx.finalRefresherThreshold}px`,
+      "background": _ctx.refresherBackground
+    }),
+    r: common_vendor.s({
+      "margin-top": `-${_ctx.finalRefresherThreshold}px`,
+      "background": _ctx.refresherBackground,
+      "opacity": _ctx.isTouchmoving ? 1 : 0
+    })
+  }) : {}, {
+    s: _ctx.useChatRecordMode && _ctx.zSlots.chatLoading && _ctx.loadingStatus !== _ctx.M.NoMore && _ctx.realTotalData.length
+  }, _ctx.useChatRecordMode && _ctx.zSlots.chatLoading && _ctx.loadingStatus !== _ctx.M.NoMore && _ctx.realTotalData.length ? {} : _ctx.useChatRecordMode && _ctx.loadingStatus !== _ctx.M.NoMore && _ctx.realTotalData.length ? common_vendor.e({
+    v: _ctx.loadingStatus !== _ctx.M.Loading
+  }, _ctx.loadingStatus !== _ctx.M.Loading ? {
+    w: common_vendor.t(_ctx.chatRecordLoadingMoreText),
+    x: common_vendor.o((...args) => _ctx._onScrollToUpper && _ctx._onScrollToUpper(...args)),
+    y: common_vendor.n(_ctx.defaultThemeStyle === "white" ? "zp-loading-more-text zp-loading-more-text-white" : "zp-loading-more-text zp-loading-more-text-black")
+  } : {
+    z: _ctx.base64Flower
+  }) : {}, {
+    t: _ctx.useChatRecordMode && _ctx.loadingStatus !== _ctx.M.NoMore && _ctx.realTotalData.length,
+    A: _ctx.showLoading && _ctx.zSlots.loading && !_ctx.loadingFullFixed
+  }, _ctx.showLoading && _ctx.zSlots.loading && !_ctx.loadingFullFixed ? {} : {}, {
+    B: _ctx.finalUseInnerList
+  }, _ctx.finalUseInnerList ? common_vendor.e({
+    C: _ctx.finalUseVirtualList
+  }, _ctx.finalUseVirtualList ? {
+    D: common_vendor.f(_ctx.virtualList, (item, index, i0) => {
+      return common_vendor.e(_ctx.useCompatibilityMode ? {} : {
+        a: "cell-" + i0,
+        b: common_vendor.r("cell", {
+          item,
+          index: _ctx.virtualTopRangeIndex + index
+        }, i0)
+      }, {
+        c: `zp-id-${item["zp_index"]}`,
+        d: item["zp_unique_index"],
+        e: common_vendor.o(($event) => _ctx._innerCellClick(item, _ctx.virtualTopRangeIndex + index), item["zp_unique_index"])
+      });
+    }),
+    E: _ctx.useCompatibilityMode,
+    F: common_vendor.s(_ctx.innerCellStyle)
+  } : {
+    G: common_vendor.f(_ctx.realTotalData, (item, index, i0) => {
+      return {
+        a: "cell-" + i0,
+        b: common_vendor.r("cell", {
+          item,
+          index
+        }, i0),
+        c: index,
+        d: common_vendor.o(($event) => _ctx._innerCellClick(item, index), index)
+      };
+    })
+  }, {
+    H: common_vendor.s(_ctx.innerListStyle)
+  }) : {}, {
+    I: _ctx.useVirtualList
+  }, _ctx.useVirtualList ? {
+    J: common_vendor.s({
+      height: _ctx.virtualPlaceholderBottomHeight + "px"
+    })
+  } : {}, {
+    K: _ctx.showLoadingMoreDefault
+  }, _ctx.showLoadingMoreDefault ? {} : _ctx.showLoadingMoreLoading ? {} : _ctx.showLoadingMoreNoMore ? {} : _ctx.showLoadingMoreFail ? {} : _ctx.showLoadingMoreCustom ? {
+    P: common_vendor.o(($event) => _ctx._onLoadingMore("click")),
+    Q: common_vendor.p({
+      zConfig: _ctx.zLoadMoreConfig
+    })
+  } : {}, {
+    L: _ctx.showLoadingMoreLoading,
+    M: _ctx.showLoadingMoreNoMore,
+    N: _ctx.showLoadingMoreFail,
+    O: _ctx.showLoadingMoreCustom,
+    R: _ctx.safeAreaInsetBottom && _ctx.useSafeAreaPlaceholder
+  }, _ctx.safeAreaInsetBottom && _ctx.useSafeAreaPlaceholder ? {
+    S: common_vendor.s({
+      height: _ctx.safeAreaBottom + "px"
+    })
+  } : {}, {
+    T: common_vendor.s({
+      transform: _ctx.virtualPlaceholderTopHeight > 0 ? `translateY(${_ctx.virtualPlaceholderTopHeight}px)` : "none"
+    }),
+    U: common_vendor.s(_ctx.finalPagingContentStyle),
+    V: _ctx.showEmpty
+  }, _ctx.showEmpty ? common_vendor.e({
+    W: _ctx.zSlots.empty
+  }, _ctx.zSlots.empty ? {
+    X: common_vendor.r("empty", {
+      isLoadFailed: _ctx.isLoadFailed
+    })
+  } : {
+    Y: common_vendor.o(_ctx._emptyViewReload),
+    Z: common_vendor.o(_ctx._emptyViewClick),
+    aa: common_vendor.p({
+      emptyViewImg: _ctx.finalEmptyViewImg,
+      emptyViewText: _ctx.finalEmptyViewText,
+      showEmptyViewReload: _ctx.finalShowEmptyViewReload,
+      emptyViewReloadText: _ctx.finalEmptyViewReloadText,
+      isLoadFailed: _ctx.isLoadFailed,
+      emptyViewStyle: _ctx.emptyViewStyle,
+      emptyViewTitleStyle: _ctx.emptyViewTitleStyle,
+      emptyViewImgStyle: _ctx.emptyViewImgStyle,
+      emptyViewReloadStyle: _ctx.emptyViewReloadStyle,
+      emptyViewZIndex: _ctx.emptyViewZIndex,
+      emptyViewFixed: _ctx.emptyViewFixed
+    })
+  }, {
+    ab: _ctx.emptyViewCenter ? 1 : "",
+    ac: common_vendor.s({
+      emptyViewSuperStyle: _ctx.emptyViewSuperStyle
+    })
+  }) : {}, {
+    ad: common_vendor.s(_ctx.scrollViewInStyle),
+    ae: common_vendor.s({
+      "transform": _ctx.finalRefresherTransform,
+      "transition": _ctx.refresherTransition
+    }),
+    af: _ctx.wxsPropType,
+    ag: _ctx.finalRefresherThreshold,
+    ah: _ctx.isIos,
+    ai: _ctx.loading || _ctx.isRefresherInComplete,
+    aj: _ctx.useChatRecordMode,
+    ak: _ctx.refresherEnabled,
+    al: _ctx.useCustomRefresher,
+    am: _ctx.wxsPageScrollTop,
+    an: _ctx.wxsScrollTop,
+    ao: _ctx.refresherMaxAngle,
+    ap: _ctx.refresherAngleEnableChangeContinued,
+    aq: _ctx.usePageScroll,
+    ar: _ctx.watchTouchDirectionChange,
+    as: _ctx.isTouchmoving,
+    at: _ctx.finalRefresherOutRate,
+    av: _ctx.finalRefresherPullRate,
+    aw: _ctx.hasTouchmove,
+    ax: !_ctx.usePageScroll ? 1 : "",
+    ay: !_ctx.showScrollbar ? 1 : "",
+    az: _ctx.scrollTop,
+    aA: _ctx.scrollX,
+    aB: _ctx.scrollable && !_ctx.usePageScroll && _ctx.scrollEnable && (_ctx.refresherCompleteScrollable ? true : _ctx.refresherStatus !== _ctx.R.Complete),
+    aC: _ctx.finalEnableBackToTop,
+    aD: _ctx.showScrollbar,
+    aE: _ctx.finalScrollWithAnimation,
+    aF: _ctx.scrollIntoView,
+    aG: _ctx.finalLowerThreshold,
+    aH: _ctx.finalRefresherEnabled && !_ctx.useCustomRefresher,
+    aI: _ctx.finalRefresherThreshold,
+    aJ: _ctx.finalRefresherDefaultStyle,
+    aK: _ctx.refresherBackground,
+    aL: _ctx.finalRefresherTriggered,
+    aM: common_vendor.o((...args) => _ctx._scroll && _ctx._scroll(...args)),
+    aN: common_vendor.o((...args) => _ctx._onScrollToLower && _ctx._onScrollToLower(...args)),
+    aO: common_vendor.o((...args) => _ctx._onScrollToUpper && _ctx._onScrollToUpper(...args)),
+    aP: common_vendor.o((...args) => _ctx._onRestore && _ctx._onRestore(...args)),
+    aQ: common_vendor.o(($event) => _ctx._onRefresh(true)),
+    aR: _ctx.finalIsOldWebView ? 1 : "",
+    aS: common_vendor.s(_ctx.scrollViewContainerStyle),
+    aT: _ctx.zSlots.right
+  }, _ctx.zSlots.right ? {
+    aU: _ctx.finalIsOldWebView ? 1 : ""
+  } : {}, {
+    aV: !_ctx.usePageScroll ? 1 : "",
+    aW: common_vendor.s(_ctx.finalScrollViewStyle),
+    aX: !_ctx.usePageScroll && _ctx.zSlots.bottom
+  }, !_ctx.usePageScroll && _ctx.zSlots.bottom ? {} : _ctx.usePageScroll && _ctx.zSlots.bottom ? {
+    aZ: common_vendor.s({
+      "bottom": `${_ctx.windowBottom}px`
+    })
+  } : {}, {
+    aY: _ctx.usePageScroll && _ctx.zSlots.bottom,
+    ba: _ctx.showBackToTopClass
+  }, _ctx.showBackToTopClass ? common_vendor.e({
+    bb: _ctx.zSlots.backToTop
+  }, _ctx.zSlots.backToTop ? {} : {
+    bc: _ctx.backToTopImg.length ? _ctx.backToTopImg : _ctx.base64BackToTop
+  }, {
+    bd: common_vendor.n(_ctx.backToTopClass),
+    be: common_vendor.s(_ctx.finalBackToTopStyle),
+    bf: common_vendor.o((...args) => _ctx._backToTopClick && _ctx._backToTopClick(...args))
+  }) : {}, {
+    bg: _ctx.showLoading && _ctx.zSlots.loading && _ctx.loadingFullFixed
+  }, _ctx.showLoading && _ctx.zSlots.loading && _ctx.loadingFullFixed ? {} : {}, {
+    bh: !_ctx.usePageScroll && _ctx.fixed ? 1 : "",
+    bi: _ctx.usePageScroll ? 1 : "",
+    bj: _ctx.renderPropScrollTop < 1 ? 1 : "",
+    bk: common_vendor.s(_ctx.finalPagingStyle)
+  });
+}
+if (typeof block0 === "function")
+  block0(uni_modules_zPaging_components_zPaging_js_zPagingMain._sfc_main);
+if (typeof block1 === "function")
+  block1(uni_modules_zPaging_components_zPaging_js_zPagingMain._sfc_main);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(uni_modules_zPaging_components_zPaging_js_zPagingMain._sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-1aa372d7"], ["__file", "D:/uniapp/house/uni_modules/z-paging/components/z-paging/z-paging.vue"]]);
+wx.createComponent(Component);

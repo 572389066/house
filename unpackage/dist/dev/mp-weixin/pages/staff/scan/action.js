@@ -1,1 +1,30 @@
-"use strict";const e=require("../../../common/vendor.js"),s={data(){return{}},methods:{}};Array||e.resolveComponent("uni-icons")();const o=()=>"../../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";Math||o();function c(n,t,r,_,a,u){return{a:e.p({type:"right",size:"22"}),b:e.p({type:"right",size:"22"})}}const i=e._export_sfc(s,[["render",c],["__scopeId","data-v-c463b50b"],["__file","D:/HBuilderProjects/house/pages/staff/scan/action.vue"]]);wx.createPage(i);
+"use strict";
+const common_vendor = require("../../../common/vendor.js");
+const _sfc_main = {
+  data() {
+    return {};
+  },
+  methods: {}
+};
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  _easycom_uni_icons2();
+}
+const _easycom_uni_icons = () => "../../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return {
+    a: common_vendor.p({
+      type: "right",
+      size: "22"
+    }),
+    b: common_vendor.p({
+      type: "right",
+      size: "22"
+    })
+  };
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-c463b50b"], ["__file", "D:/uniapp/house/pages/staff/scan/action.vue"]]);
+wx.createPage(MiniProgramPage);

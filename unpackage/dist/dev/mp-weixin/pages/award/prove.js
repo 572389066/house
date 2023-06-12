@@ -1,1 +1,101 @@
-"use strict";const i=require("../../common/vendor.js"),n=require("../../utils/urlUtil.js");require("../../utils/request.js");require("../../utils/cache.js");const m={data(){return{imageURL:"",promotionId:""}},onLoad(e){this.promotionId=e.id},methods:{getImageUrl(e){return n.urlUtil.getImgUrlNotSize(e)},onClockUpload(){i.index.chooseMedia({count:1,mediaType:["image"],sourceType:["album","camera"],maxDuration:30,camera:"back",sizeType:["compressed"],success:e=>{if(e&&e.tempFiles&&e.tempFiles.length>0){let o=e.tempFiles[0];this.uploadImage(o.tempFilePath)}}})},uploadImage(e){this.$api.uploadFile(e).then(o=>{this.imageURL=o.url}).catch(o=>{this.imageURL=""})},submitPromotion(){if(!this.imageURL||this.imageURL===""){this.$msg("请选择推广照片");return}this.$api.submitPromotion(this.promotionId,this.imageURL).then(e=>{e&&(e.code_type=="Qrcode"&&e.qrcode&&e.qrcode!=""?i.index.redirectTo({url:"/pages/award/result?result="+encodeURIComponent(JSON.stringify(e))}):e.code_type=="Number"&&e.code&&e.code!=""?i.index.redirectTo({url:"/pages/award/result?result="+encodeURIComponent(JSON.stringify(e))}):this.$msg("获取提交结果失败"))}).catch(e=>{})},onLoadImageError(e){this.imageURL=""}}};Array||i.resolveComponent("uni-icons")();const c=()=>"../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";Math||c();function s(e,o,u,d,t,r){return i.e({a:t.imageURL&&t.imageURL.length>0},t.imageURL&&t.imageURL.length>0?{b:r.getImageUrl(t.imageURL),c:i.o((...a)=>r.onLoadImageError&&r.onLoadImageError(...a))}:{d:i.p({type:"camera-filled",size:"80rpx",color:"rgba(51, 49, 52, .25)"})},{e:i.o(a=>r.onClockUpload()),f:i.o((...a)=>r.submitPromotion&&r.submitPromotion(...a))})}const l=i._export_sfc(m,[["render",s],["__scopeId","data-v-4d32f24a"],["__file","D:/HBuilderProjects/house/pages/award/prove.vue"]]);wx.createPage(l);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const utils_urlUtil = require("../../utils/urlUtil.js");
+require("../../utils/request.js");
+require("../../utils/cache.js");
+const _sfc_main = {
+  data() {
+    return {
+      imageURL: "",
+      promotionId: ""
+    };
+  },
+  onLoad(option) {
+    this.promotionId = option.id;
+  },
+  methods: {
+    getImageUrl(url) {
+      let relUrl = utils_urlUtil.urlUtil.getImgUrlNotSize(url);
+      return relUrl;
+    },
+    onClockUpload() {
+      common_vendor.index.chooseMedia({
+        count: 1,
+        mediaType: ["image"],
+        sourceType: ["album", "camera"],
+        maxDuration: 30,
+        camera: "back",
+        sizeType: ["compressed"],
+        success: (res) => {
+          if (res && res.tempFiles && res.tempFiles.length > 0) {
+            let tempFile = res.tempFiles[0];
+            this.uploadImage(tempFile.tempFilePath);
+          }
+        }
+      });
+    },
+    uploadImage(filePath) {
+      this.$api.uploadFile(filePath).then((res) => {
+        this.imageURL = res.url;
+      }).catch((err) => {
+        this.imageURL = "";
+      });
+    },
+    submitPromotion() {
+      if (!this.imageURL || this.imageURL === "") {
+        this.$msg("请选择推广照片");
+        return;
+      }
+      this.$api.submitPromotion(this.promotionId, this.imageURL).then((res) => {
+        if (res) {
+          if (res.code_type == "Qrcode" && res.qrcode && res.qrcode != "") {
+            common_vendor.index.redirectTo({
+              url: "/pages/award/result?result=" + encodeURIComponent(JSON.stringify(
+                res
+              ))
+            });
+          } else if (res.code_type == "Number" && res.code && res.code != "") {
+            common_vendor.index.redirectTo({
+              url: "/pages/award/result?result=" + encodeURIComponent(JSON.stringify(
+                res
+              ))
+            });
+          } else {
+            this.$msg("获取提交结果失败");
+          }
+        }
+      }).catch((err) => {
+      });
+    },
+    onLoadImageError(e) {
+      this.imageURL = "";
+    }
+  }
+};
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  _easycom_uni_icons2();
+}
+const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return common_vendor.e({
+    a: $data.imageURL && $data.imageURL.length > 0
+  }, $data.imageURL && $data.imageURL.length > 0 ? {
+    b: $options.getImageUrl($data.imageURL),
+    c: common_vendor.o((...args) => $options.onLoadImageError && $options.onLoadImageError(...args))
+  } : {
+    d: common_vendor.p({
+      type: "camera-filled",
+      size: "80rpx",
+      color: "rgba(51, 49, 52, .25)"
+    })
+  }, {
+    e: common_vendor.o(($event) => $options.onClockUpload()),
+    f: common_vendor.o((...args) => $options.submitPromotion && $options.submitPromotion(...args))
+  });
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-4d32f24a"], ["__file", "D:/uniapp/house/pages/award/prove.vue"]]);
+wx.createPage(MiniProgramPage);

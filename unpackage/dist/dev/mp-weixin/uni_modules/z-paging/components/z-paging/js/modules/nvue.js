@@ -1,1 +1,35 @@
-"use strict";const r=require("../../../../../../common/vendor.js"),n={props:{},data(){return{nRefresherLoading:!1,nListIsDragging:!1,nShowBottom:!0,nFixFreezing:!1,nShowRefresherReveal:!1,nIsFirstPageAndNoMore:!1,nFirstPageAndNoMoreChecked:!1,nLoadingMoreFixedHeight:!1,nShowRefresherRevealHeight:0,nOldShowRefresherRevealHeight:-1,nRefresherWidth:r.index.upx2px(750)}},watch:{nIsFirstPageAndNoMore:{handler(t){const e=!this.useChatRecordMode||t?{}:{transform:"rotate(180deg)"};this.$emit("update:cellStyle",e),this.$emit("cellStyleChange",e)},immediate:!0}},computed:{},mounted(){},methods:{}};exports.nvueModule=n;
+"use strict";
+const common_vendor = require("../../../../../../common/vendor.js");
+const nvueModule = {
+  props: {},
+  data() {
+    return {
+      nRefresherLoading: false,
+      nListIsDragging: false,
+      nShowBottom: true,
+      nFixFreezing: false,
+      nShowRefresherReveal: false,
+      nIsFirstPageAndNoMore: false,
+      nFirstPageAndNoMoreChecked: false,
+      nLoadingMoreFixedHeight: false,
+      nShowRefresherRevealHeight: 0,
+      nOldShowRefresherRevealHeight: -1,
+      nRefresherWidth: common_vendor.index.upx2px(750)
+    };
+  },
+  watch: {
+    nIsFirstPageAndNoMore: {
+      handler(newVal) {
+        const cellStyle = !this.useChatRecordMode || newVal ? {} : { transform: "rotate(180deg)" };
+        this.$emit("update:cellStyle", cellStyle);
+        this.$emit("cellStyleChange", cellStyle);
+      },
+      immediate: true
+    }
+  },
+  computed: {},
+  mounted() {
+  },
+  methods: {}
+};
+exports.nvueModule = nvueModule;

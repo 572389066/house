@@ -1,1 +1,24 @@
-"use strict";const o=require("../../common/vendor.js"),r={data(){return{url:""}},onLoad(e){this.url=e.url},onShareAppMessage(e){return this.$shareIndex()},methods:{}};function t(e,u,a,c,s,_){return{a:s.url}}const n=o._export_sfc(r,[["render",t],["__file","D:/HBuilderProjects/house/pages/web/web.vue"]]);r.__runtimeHooks=2;wx.createPage(n);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const _sfc_main = {
+  data() {
+    return {
+      url: ""
+    };
+  },
+  onLoad(options) {
+    this.url = options.url;
+  },
+  onShareAppMessage(res) {
+    return this.$shareIndex();
+  },
+  methods: {}
+};
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return {
+    a: $data.url
+  };
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "D:/uniapp/house/pages/web/web.vue"]]);
+_sfc_main.__runtimeHooks = 2;
+wx.createPage(MiniProgramPage);

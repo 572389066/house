@@ -1,1 +1,123 @@
-"use strict";const e=require("../../common/vendor.js"),y=require("../../utils/urlUtil.js"),o=require("../../utils/cache.js"),u=require("../../common/assets.js");require("../../utils/request.js");const g={data(){return{inputValue:"",buildingData:[],historyKey:[],keywords:null,selectedHistory:""}},onLoad(){this.historyKey=o.cache.getHistoryKeywords()},methods:{getImageUrl(i){return y.urlUtil.getImgUrlNotSize(i)},onItemClick(i){e.index.navigateTo({url:"/pages/pfs/detail?id="+i.id})},cleanHistoryKeywords(){o.cache.cleanHistoryKeywords(),this.historyKey=o.cache.getHistoryKeywords()},onClickSearch(i){o.cache.saveHistoryKeywords(this.keywords),this.historyKey=o.cache.getHistoryKeywords(),this.onSearch(i)},onClickHistory(i){this.selectedHistory=i,o.cache.saveHistoryKeywords(i),this.historyKey=o.cache.getHistoryKeywords(),this.onSearch({detail:{value:i}})},onSearch(i){this.keywords=i.detail.value,this.fetchBuildingList(1,20)},fetchBuildingList(i,c){this.$api.fetchBuildingList(i,c,this.keywords,"",!1).then(l=>{this.$refs.paging.complete(l)}).catch(l=>{this.$refs.paging.complete(!1)})}}};if(!Array){const i=e.resolveComponent("uni-icons"),c=e.resolveComponent("z-paging");(i+c)()}const d=()=>"../../uni_modules/uni-icons/components/uni-icons/uni-icons.js",_=()=>"../../uni_modules/z-paging/components/z-paging/z-paging.js";Math||(d+_)();function p(i,c,l,K,r,t){return e.e({a:u._imports_0$2,b:e.o((...s)=>t.onClickSearch&&t.onClickSearch(...s)),c:e.o([s=>r.selectedHistory=s.detail.value,(...s)=>t.onSearch&&t.onSearch(...s)]),d:r.selectedHistory,e:r.historyKey&&r.historyKey.length>0},r.historyKey&&r.historyKey.length>0?{f:e.o(s=>t.cleanHistoryKeywords()),g:e.p({type:"trash-filled",size:"34rpx",color:"#626162"})}:{},{h:r.historyKey&&r.historyKey.length>0},r.historyKey&&r.historyKey.length>0?{i:e.f(r.historyKey,(s,a,h)=>({a:e.t(s),b:e.o(n=>t.onClickHistory(s))}))}:{},{j:e.f(r.buildingData,(s,a,h)=>({a:t.getImageUrl(s.pic),b:e.t(s.name),c:e.t(s.price),d:e.t(s.address),e:e.f(s.tags,(n,m,H)=>e.e({a:n&&i.tab!=""},n&&i.tab!=""?{b:e.t(n)}:{})),f:e.o(n=>t.onItemClick(s))})),k:e.sr("paging","c10c040c-0"),l:e.o(t.fetchBuildingList),m:e.o(s=>r.buildingData=s),n:e.p({["default-page-size"]:"20",auto:!1,modelValue:r.buildingData})})}const f=e._export_sfc(g,[["render",p],["__scopeId","data-v-c10c040c"],["__file","D:/HBuilderProjects/house/pages/search/search.vue"]]);wx.createPage(f);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const utils_urlUtil = require("../../utils/urlUtil.js");
+const utils_cache = require("../../utils/cache.js");
+const common_assets = require("../../common/assets.js");
+require("../../utils/request.js");
+const _sfc_main = {
+  data() {
+    return {
+      inputValue: "",
+      buildingData: [],
+      historyKey: [],
+      keywords: null,
+      selectedHistory: ""
+    };
+  },
+  onLoad() {
+    this.historyKey = utils_cache.cache.getHistoryKeywords();
+  },
+  methods: {
+    getImageUrl(url) {
+      let relUrl = utils_urlUtil.urlUtil.getImgUrlNotSize(url);
+      return relUrl;
+    },
+    onItemClick(item) {
+      common_vendor.index.navigateTo({
+        url: "/pages/pfs/detail?id=" + item.id
+      });
+    },
+    cleanHistoryKeywords() {
+      utils_cache.cache.cleanHistoryKeywords();
+      this.historyKey = utils_cache.cache.getHistoryKeywords();
+    },
+    onClickSearch(e) {
+      utils_cache.cache.saveHistoryKeywords(this.keywords);
+      this.historyKey = utils_cache.cache.getHistoryKeywords();
+      this.onSearch(e);
+    },
+    onClickHistory(key) {
+      this.selectedHistory = key;
+      utils_cache.cache.saveHistoryKeywords(key);
+      this.historyKey = utils_cache.cache.getHistoryKeywords();
+      this.onSearch({
+        detail: {
+          value: key
+        }
+      });
+    },
+    onSearch(e) {
+      this.keywords = e.detail.value;
+      this.fetchBuildingList(1, 20);
+    },
+    fetchBuildingList(pageNo, pageSize) {
+      this.$api.fetchBuildingList(pageNo, pageSize, this.keywords, "", false).then((res) => {
+        this.$refs.paging.complete(res);
+      }).catch((err) => {
+        this.$refs.paging.complete(false);
+      });
+    }
+  }
+};
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  const _easycom_z_paging2 = common_vendor.resolveComponent("z-paging");
+  (_easycom_uni_icons2 + _easycom_z_paging2)();
+}
+const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+const _easycom_z_paging = () => "../../uni_modules/z-paging/components/z-paging/z-paging.js";
+if (!Math) {
+  (_easycom_uni_icons + _easycom_z_paging)();
+}
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return common_vendor.e({
+    a: common_assets._imports_0$2,
+    b: common_vendor.o((...args) => $options.onClickSearch && $options.onClickSearch(...args)),
+    c: common_vendor.o([($event) => $data.selectedHistory = $event.detail.value, (...args) => $options.onSearch && $options.onSearch(...args)]),
+    d: $data.selectedHistory,
+    e: $data.historyKey && $data.historyKey.length > 0
+  }, $data.historyKey && $data.historyKey.length > 0 ? {
+    f: common_vendor.o(($event) => $options.cleanHistoryKeywords()),
+    g: common_vendor.p({
+      type: "trash-filled",
+      size: "34rpx",
+      color: "#626162"
+    })
+  } : {}, {
+    h: $data.historyKey && $data.historyKey.length > 0
+  }, $data.historyKey && $data.historyKey.length > 0 ? {
+    i: common_vendor.f($data.historyKey, (item, index, i0) => {
+      return {
+        a: common_vendor.t(item),
+        b: common_vendor.o(($event) => $options.onClickHistory(item))
+      };
+    })
+  } : {}, {
+    j: common_vendor.f($data.buildingData, (item, index, i0) => {
+      return {
+        a: $options.getImageUrl(item.pic),
+        b: common_vendor.t(item.name),
+        c: common_vendor.t(item.price),
+        d: common_vendor.t(item.address),
+        e: common_vendor.f(item.tags, (tag, index2, i1) => {
+          return common_vendor.e({
+            a: tag && _ctx.tab != ""
+          }, tag && _ctx.tab != "" ? {
+            b: common_vendor.t(tag)
+          } : {});
+        }),
+        f: common_vendor.o(($event) => $options.onItemClick(item))
+      };
+    }),
+    k: common_vendor.sr("paging", "c10c040c-0"),
+    l: common_vendor.o($options.fetchBuildingList),
+    m: common_vendor.o(($event) => $data.buildingData = $event),
+    n: common_vendor.p({
+      ["default-page-size"]: "20",
+      auto: false,
+      modelValue: $data.buildingData
+    })
+  });
+}
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-c10c040c"], ["__file", "D:/uniapp/house/pages/search/search.vue"]]);
+wx.createPage(MiniProgramPage);

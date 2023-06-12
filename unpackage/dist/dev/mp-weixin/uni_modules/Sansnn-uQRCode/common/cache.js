@@ -1,1 +1,3 @@
-"use strict";const c=[];exports.cacheImageList=c;
+"use strict";
+const cacheImageList = [];
+exports.cacheImageList = cacheImageList;

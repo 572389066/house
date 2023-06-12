@@ -1,1 +1,41 @@
-"use strict";function c(a){try{setTimeout(function(){t().globalData.zp_handleQueryCallback=a},1)}catch{}}function u(a,n,e){const l=t().globalData.zp_handleQueryCallback;return l?l(a,n,e):[a,n,e]}function r(a){try{setTimeout(function(){t().globalData.zp_handleLanguage2LocalCallback=a},1)}catch{}}function o(a,n){const e=t().globalData.zp_handleLanguage2LocalCallback;return e?e(a,n):n}function t(){return getApp()}const g={handleQuery:c,_handleQuery:u,handleLanguage2Local:r,_handleLanguage2Local:o};exports.interceptor=g;
+"use strict";
+function handleQuery(callback) {
+  try {
+    setTimeout(function() {
+      _getApp().globalData.zp_handleQueryCallback = callback;
+    }, 1);
+  } catch (e) {
+  }
+}
+function _handleQuery(pageNo, pageSize, from) {
+  const handleQueryCallback = _getApp().globalData.zp_handleQueryCallback;
+  if (handleQueryCallback) {
+    return handleQueryCallback(pageNo, pageSize, from);
+  }
+  return [pageNo, pageSize, from];
+}
+function handleLanguage2Local(callback) {
+  try {
+    setTimeout(function() {
+      _getApp().globalData.zp_handleLanguage2LocalCallback = callback;
+    }, 1);
+  } catch (e) {
+  }
+}
+function _handleLanguage2Local(language, local) {
+  const handleLanguage2LocalCallback = _getApp().globalData.zp_handleLanguage2LocalCallback;
+  if (handleLanguage2LocalCallback) {
+    return handleLanguage2LocalCallback(language, local);
+  }
+  return local;
+}
+function _getApp() {
+  return getApp();
+}
+const interceptor = {
+  handleQuery,
+  _handleQuery,
+  handleLanguage2Local,
+  _handleLanguage2Local
+};
+exports.interceptor = interceptor;

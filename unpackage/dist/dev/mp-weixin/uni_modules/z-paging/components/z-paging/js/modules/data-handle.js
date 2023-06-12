@@ -1,1 +1,662 @@
-"use strict";const g=require("../../../../../../common/vendor.js"),s=require("../z-paging-utils.js"),d=require("../z-paging-constant.js"),o=require("../z-paging-enum.js"),m=require("../z-paging-interceptor.js"),y={props:{defaultPageNo:{type:[Number,String],default:s.u.gc("defaultPageNo",1),observer:function(e){this.pageNo=e}},defaultPageSize:{type:[Number,String],default:s.u.gc("defaultPageSize",10),validator:e=>(e<=0&&s.u.consoleErr("default-page-size必须大于0！"),e>0)},dataKey:{type:[Number,String,Object],default:function(){return s.u.gc("dataKey",null)}},useCache:{type:Boolean,default:s.u.gc("useCache",!1)},cacheKey:{type:String,default:s.u.gc("cacheKey",null)},cacheMode:{type:String,default:s.u.gc("cacheMode",o.Enum.CacheMode.Default)},autowireListName:{type:String,default:s.u.gc("autowireListName","")},autowireQueryName:{type:String,default:s.u.gc("autowireQueryName","")},auto:{type:Boolean,default:s.u.gc("auto",!0)},reloadWhenRefresh:{type:Boolean,default:s.u.gc("reloadWhenRefresh",!0)},autoScrollToTopWhenReload:{type:Boolean,default:s.u.gc("autoScrollToTopWhenReload",!0)},autoCleanListWhenReload:{type:Boolean,default:s.u.gc("autoCleanListWhenReload",!0)},showRefresherWhenReload:{type:Boolean,default:s.u.gc("showRefresherWhenReload",!1)},showLoadingMoreWhenReload:{type:Boolean,default:s.u.gc("showLoadingMoreWhenReload",!1)},createdReload:{type:Boolean,default:s.u.gc("createdReload",!1)},localPagingLoadingTime:{type:[Number,String],default:s.u.gc("localPagingLoadingTime",200)},useChatRecordMode:{type:Boolean,default:s.u.gc("useChatRecordMode",!1)},autoHideKeyboardWhenChat:{type:Boolean,default:s.u.gc("autoHideKeyboardWhenChat",!0)},concat:{type:Boolean,default:s.u.gc("concat",!0)},value:{type:Array,default:function(){return[]}},modelValue:{type:Array,default:function(){return[]}}},data(){return{currentData:[],totalData:[],realTotalData:[],totalLocalPagingList:[],dataPromiseResultMap:{reload:null,complete:null,localPaging:null},isSettingCacheList:!1,pageNo:1,currentRefreshPageSize:0,isLocalPaging:!1,isAddedData:!1,isTotalChangeFromAddData:!1,privateConcat:!0,myParentQuery:-1,firstPageLoaded:!1,pagingLoaded:!1,loaded:!1,isUserReload:!0,fromEmptyViewReload:!1,queryFrom:"",listRendering:!1,listRenderingTimeout:null}},computed:{pageSize(){return this.defaultPageSize},finalConcat(){return this.concat&&this.privateConcat},finalUseCache(){return this.useCache&&!this.cacheKey&&s.u.consoleErr("use-cache为true时，必须设置cache-key，否则缓存无效！"),this.useCache&&!!this.cacheKey},finalCacheKey(){return this.cacheKey?`${d.c.cachePrefixKey}-${this.cacheKey}`:null},isFirstPage(){return this.pageNo===this.defaultPageNo}},watch:{totalData(e,t){this._totalDataChange(e,t)},currentData(e,t){this._currentDataChange(e,t)},useChatRecordMode(e,t){e&&(this.nLoadingMoreFixedHeight=!1)},value:{handler(e){this.realTotalData=e},immediate:!0},modelValue:{handler(e){this.realTotalData=e},immediate:!0}},methods:{complete(e,t=!0){return this.customNoMore=-1,this.addData(e,t)},completeByKey(e,t=null,a=!0){return t!==null&&this.dataKey!==null&&t!==this.dataKey?(this.isFirstPage&&this.endRefresh(),new Promise(i=>i())):(this.customNoMore=-1,this.addData(e,a))},completeByTotal(e,t,a=!0){if(t=="undefined")this.customNoMore=-1;else{const i=this._checkDataType(e,a,!1);if(e=i.data,a=i.success,t>=0&&a)return new Promise((r,l)=>{this.$nextTick(()=>{let h=!1,n=this.realTotalData.length;this.pageNo==this.defaultPageNo&&(n=0);const c=this.privateConcat?e.length:0;let u=n+c-t;u>=0&&(h=!0,u=this.defaultPageSize-u,u>0&&u<e.length&&this.privateConcat&&(e=e.splice(0,u))),this.completeByNoMore(e,h,a).then(f=>r(f)).catch(()=>l())})})}return this.addData(e,a)},completeByNoMore(e,t,a=!0){return t!="undefined"&&(this.customNoMore=t==!0?1:0),this.addData(e,a)},addData(e,t=!0){this.fromCompleteEmit||(this.disabledCompleteEmit=!0,this.fromCompleteEmit=!1);const i=s.u.getTime()-this.requestTimeStamp;let r=this.minDelay;this.isFirstPage&&this.finalShowRefresherWhenReload&&(r=Math.max(400,r));const l=this.requestTimeStamp>0&&i<r?r-i:0;return this.$nextTick(()=>{setTimeout(()=>{this._addData(e,t,!1)},this.delay>0?this.delay:l)}),new Promise((h,n)=>{this.dataPromiseResultMap.complete={resolve:h,reject:n}})},addDataFromTop(e,t=!0,a=!0){Object.prototype.toString.call(e)!=="[object Array]"&&(e=[e]),this.totalData=[...e,...this.totalData],t&&setTimeout(()=>{this._scrollToTop(a)},d.c.delayTime)},resetTotalData(e){this.isTotalChangeFromAddData=!0,Object.prototype.toString.call(e)!=="[object Array]"&&(e=[e]),this.totalData=e},addChatRecordData(e,t=!0,a=!0){Object.prototype.toString.call(e)!=="[object Array]"&&(e=[e]),this.useChatRecordMode&&(this.isTotalChangeFromAddData=!0,this.totalData=[...this.totalData,...e],t&&setTimeout(()=>{this._scrollToBottom(a)},d.c.delayTime))},setLocalPaging(e,t=!0){return this.isLocalPaging=!0,this.$nextTick(()=>{this._addData(e,t,!0)}),new Promise((a,i)=>{this.dataPromiseResultMap.localPaging={resolve:a,reject:i}})},reload(e=this.showRefresherWhenReload){return e&&(this.privateShowRefresherWhenReload=e,this.isUserPullDown=!0),this.listRendering=!0,this.$nextTick(()=>{this._preReload(e,!1)}),new Promise((t,a)=>{this.dataPromiseResultMap.reload={resolve:t,reject:a}})},refresh(){if(!this.realTotalData.length)return this.reload();const e=this.pageNo-this.defaultPageNo+1;if(e>=1){this.loading=!0,this.privateConcat=!1;const t=e*this.pageSize;this.currentRefreshPageSize=t,this._emitQuery(this.defaultPageNo,t,o.Enum.QueryFrom.Refresh),this._callMyParentQuery(this.defaultPageNo,t)}return new Promise((t,a)=>{this.dataPromiseResultMap.reload={resolve:t,reject:a}})},updateCache(){this.finalUseCache&&this.totalData.length&&this._saveLocalCache(this.totalData.slice(0,Math.min(this.totalData.length,this.pageSize)))},clean(){this._reload(!0),this._addData([],!0,!1)},clear(){this.clean()},doChatRecordLoadMore(){this.useChatRecordMode&&this._onLoadingMore("click")},_preReload(e=this.showRefresherWhenReload,t=!0){this.isUserReload=!0,this.loadingType=o.Enum.LoadingType.Refresher,e?(this.privateShowRefresherWhenReload=e,this.useCustomRefresher?this._doRefresherRefreshAnimate():this.refresherTriggered=!0):this._refresherEnd(!1,!1,!1,!1),this._reload(!1,t)},_reload(e=!1,t=!1,a=!1){this.isAddedData=!1,this.insideOfPaging=-1,this.cacheScrollNodeHeight=-1,this.pageNo=this.defaultPageNo,this._cleanRefresherEndTimeout(),!this.privateShowRefresherWhenReload&&!e&&this._startLoading(!0),this.firstPageLoaded=!0,this.isTotalChangeFromAddData=!1,this.isSettingCacheList||(this.totalData=[]),e||(this._emitQuery(this.pageNo,this.defaultPageSize,a?o.Enum.QueryFrom.UserPullDown:o.Enum.QueryFrom.Reload),setTimeout(()=>{this._callMyParentQuery()},0),!t&&this.autoScrollToTopWhenReload&&this._scrollToTop(!1)),this.$nextTick(()=>{})},_addData(e,t,a){this.isAddedData=!0,this.fromEmptyViewReload=!1,this.isTotalChangeFromAddData=!0,this.refresherTriggered=!1,this._endSystemLoadingAndRefresh();const i=this.isUserPullDown;this.showRefresherUpdateTime&&this.isFirstPage&&(s.u.setRefesrherTime(s.u.getTime(),this.refresherUpdateTimeKey),this.$refs.refresh&&this.$refs.refresh.updateTime()),!a&&i&&this.isFirstPage&&(this.isUserPullDown=!1);let r=this._checkDataType(e,t,a);e=r.data,t=r.success;let l=d.c.delayTime;if(this.loadingForNow=!1,setTimeout(()=>{this.pagingLoaded=!0,this.$nextTick(()=>{!a&&this._refresherEnd(l>0,!0,i)})},l),this.isFirstPage&&(this.isLoadFailed=!t,this.$emit("isLoadFailedChange",this.isLoadFailed),this.finalUseCache&&t&&(this.cacheMode===o.Enum.CacheMode.Always||this.isSettingCacheList)&&this._saveLocalCache(e)),this.isSettingCacheList=!1,t)if(this.privateConcat===!1&&this.loadingStatus===o.Enum.More.NoMore||(this.loadingStatus=o.Enum.More.Default),a){this.totalLocalPagingList=e;const h=this.defaultPageNo,n=this.queryFrom!==o.Enum.QueryFrom.Refresh?this.defaultPageSize:this.currentRefreshPageSize;this._localPagingQueryList(h,n,0,c=>{this.completeByTotal(c,this.totalLocalPagingList.length)})}else setTimeout(()=>{this._currentDataChange(e,this.currentData),this._callDataPromise(!0,this.totalData)},0);else this._currentDataChange(e,this.currentData),this._callDataPromise(!1),this.loadingStatus=o.Enum.More.Fail,this.loadingType===o.Enum.LoadingType.LoadingMore&&this.pageNo--},_totalDataChange(e,t,a=!0){(!this.isUserReload||!this.autoCleanListWhenReload)&&this.firstPageLoaded&&!e.length&&t.length||(this._doCheckScrollViewShouldFullHeight(e),!this.realTotalData.length&&!e.length&&(a=!1),this.realTotalData=e,a&&(this.$emit("input",e),this.$emit("update:modelValue",e),this.$emit("update:list",e),this.$emit("listChange",e),this._callMyParentList(e)),this.firstPageLoaded=!1,this.isTotalChangeFromAddData=!1,this.$nextTick(()=>{setTimeout(()=>{this._getNodeClientRect(".zp-paging-container-content").then(i=>{i&&this.$emit("contentHeightChanged",i[0].height)})},this.isIos?100:300)}))},_currentDataChange(e,t){if(e=[...e],this.isFirstPage?this.listRendering=!1:(this.listRendering=!0,this.listRenderingTimeout&&clearTimeout(this.listRenderingTimeout),this.$nextTick(()=>{this.listRenderingTimeout=setTimeout(()=>{this.listRendering=!1},d.c.delayTime)})),this.finalUseVirtualList&&this._setCellIndex(e,this.totalData.length===0),this.useChatRecordMode&&e.reverse(),this.isFirstPage&&this.finalConcat&&(this.totalData=[]),this.customNoMore!==-1?(this.customNoMore===1||!e.length)&&(this.loadingStatus=o.Enum.More.NoMore):(!e.length||e.length&&e.length<this.defaultPageSize)&&(this.loadingStatus=o.Enum.More.NoMore),!this.totalData.length)this.finalConcat&&(this.totalData=e),this.useChatRecordMode&&this.$nextTick(()=>{this._scrollToBottom(!1)});else if(this.useChatRecordMode){const a=e.length;let i=`z-paging-${a}`;this.totalData=[...e,...this.totalData],this.pageNo!==this.defaultPageNo?(this.privateScrollWithAnimation=0,this.$emit("update:chatIndex",a),setTimeout(()=>{this._scrollIntoView(i,30+Math.max(0,this.cacheTopHeight),!1,()=>{this.$emit("update:chatIndex",0)})},this.usePageScroll?this.isIos?50:100:200)):this.$nextTick(()=>{this._scrollToBottom(!1)})}else if(this.finalConcat){const a=this.oldScrollTop;this.totalData=[...this.totalData,...e],!this.isIos&&!this.refresherOnly&&!this.usePageScroll&&e.length&&(this.loadingMoreTimeStamp=s.u.getTime(),this.$nextTick(()=>{this.scrollToY(a)}))}else this.totalData=e;this.privateConcat=!0},_localPagingQueryList(e,t,a,i){e=Math.max(1,e),t=Math.max(1,t);const r=[...this.totalLocalPagingList],l=(e-1)*t,h=Math.min(r.length,l+t),n=r.splice(l,h-l);setTimeout(()=>i(n),a)},_saveLocalCache(e){g.index.setStorageSync(this.finalCacheKey,e)},_setListByLocalCache(){this.totalData=g.index.getStorageSync(this.finalCacheKey)||[],this.isSettingCacheList=!0},_callMyParentList(e){if(this.autowireListName.length){const t=s.u.getParent(this.$parent);t&&t[this.autowireListName]&&(t[this.autowireListName]=e)}},_callMyParentQuery(e=0,t=0){if(this.autowireQueryName){if(this.myParentQuery===-1){const a=s.u.getParent(this.$parent);a&&a[this.autowireQueryName]&&(this.myParentQuery=a[this.autowireQueryName])}this.myParentQuery!==-1&&(t>0?this.myParentQuery(e,t):this.myParentQuery(this.pageNo,this.defaultPageSize))}},_emitQuery(e,t,a){this.queryFrom=a,this.requestTimeStamp=s.u.getTime(),this.$emit("query",...m.interceptor._handleQuery(e,t,a))},_callDataPromise(e,t){for(const a in this.dataPromiseResultMap){const i=this.dataPromiseResultMap[a];e?i&&i.resolve({totalList:t,noMore:this.loadingStatus===o.Enum.More.NoMore}):i&&i.reject()}},_checkDataType(e,t,a){const i=Object.prototype.toString.call(e);return i==="[object Boolean]"?(t=e,e=[]):i==="[object Null]"?e=[]:i!=="[object Array]"&&(e=[],i!=="[object Undefined]"&&s.u.consoleErr(`${a?"setLocalPaging":"complete"}参数类型不正确，第一个参数类型必须为Array!`)),{data:e,success:t}}}};exports.dataHandleModule=y;
+"use strict";
+const common_vendor = require("../../../../../../common/vendor.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingUtils = require("../z-paging-utils.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingConstant = require("../z-paging-constant.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingEnum = require("../z-paging-enum.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingInterceptor = require("../z-paging-interceptor.js");
+const dataHandleModule = {
+  props: {
+    //自定义初始的pageNo，默认为1
+    defaultPageNo: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("defaultPageNo", 1),
+      observer: function(newVal) {
+        this.pageNo = newVal;
+      }
+    },
+    //自定义pageSize，默认为10
+    defaultPageSize: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("defaultPageSize", 10),
+      validator: (value) => {
+        if (value <= 0)
+          uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.consoleErr("default-page-size必须大于0！");
+        return value > 0;
+      }
+    },
+    //为保证数据一致，设置当前tab切换时的标识key，并在complete中传递相同key，若二者不一致，则complete将不会生效
+    dataKey: {
+      type: [Number, String, Object],
+      default: function() {
+        return uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("dataKey", null);
+      }
+    },
+    //使用缓存，若开启将自动缓存第一页的数据，默认为否。请注意，因考虑到切换tab时不同tab数据不同的情况，默认仅会缓存组件首次加载时第一次请求到的数据，后续的下拉刷新操作不会更新缓存。
+    useCache: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("useCache", false)
+    },
+    //使用缓存时缓存的key，用于区分不同列表的缓存数据，useCache为true时必须设置，否则缓存无效
+    cacheKey: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("cacheKey", null)
+    },
+    //缓存模式，默认仅会缓存组件首次加载时第一次请求到的数据，可设置为always，即代表总是缓存，每次列表刷新(下拉刷新、调用reload等)都会更新缓存
+    cacheMode: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("cacheMode", uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.CacheMode.Default)
+    },
+    //自动注入的list名，可自动修改父view(包含ref="paging")中对应name的list值
+    autowireListName: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autowireListName", "")
+    },
+    //自动注入的query名，可自动调用父view(包含ref="paging")中的query方法
+    autowireQueryName: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autowireQueryName", "")
+    },
+    //z-paging mounted后自动调用reload方法(mounted后自动调用接口)，默认为是
+    auto: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("auto", true)
+    },
+    //用户下拉刷新时是否触发reload方法，默认为是
+    reloadWhenRefresh: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("reloadWhenRefresh", true)
+    },
+    //reload时自动滚动到顶部，默认为是
+    autoScrollToTopWhenReload: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autoScrollToTopWhenReload", true)
+    },
+    //reload时立即自动清空原list，默认为是，若立即自动清空，则在reload之后、请求回调之前页面是空白的
+    autoCleanListWhenReload: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autoCleanListWhenReload", true)
+    },
+    //列表刷新时自动显示下拉刷新view，默认为否
+    showRefresherWhenReload: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("showRefresherWhenReload", false)
+    },
+    //列表刷新时自动显示加载更多view，且为加载中状态，默认为否
+    showLoadingMoreWhenReload: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("showLoadingMoreWhenReload", false)
+    },
+    //组件created时立即触发reload(可解决一些情况下先看到页面再看到loading的问题)，auto为true时有效。为否时将在mounted+nextTick后触发reload，默认为否
+    createdReload: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("createdReload", false)
+    },
+    //本地分页时上拉加载更多延迟时间，单位为毫秒，默认200毫秒
+    localPagingLoadingTime: {
+      type: [Number, String],
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("localPagingLoadingTime", 200)
+    },
+    //使用聊天记录模式，默认为否
+    useChatRecordMode: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("useChatRecordMode", false)
+    },
+    //使用聊天记录模式时是否自动隐藏键盘：在用户触摸列表时候自动隐藏键盘，默认为是
+    autoHideKeyboardWhenChat: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("autoHideKeyboardWhenChat", true)
+    },
+    //自动拼接complete中传过来的数组(使用聊天记录模式时无效)
+    concat: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("concat", true)
+    },
+    //父组件v-model所绑定的list的值
+    value: {
+      type: Array,
+      default: function() {
+        return [];
+      }
+    },
+    modelValue: {
+      type: Array,
+      default: function() {
+        return [];
+      }
+    }
+  },
+  data() {
+    return {
+      currentData: [],
+      totalData: [],
+      realTotalData: [],
+      totalLocalPagingList: [],
+      dataPromiseResultMap: {
+        reload: null,
+        complete: null,
+        localPaging: null
+      },
+      isSettingCacheList: false,
+      pageNo: 1,
+      currentRefreshPageSize: 0,
+      isLocalPaging: false,
+      isAddedData: false,
+      isTotalChangeFromAddData: false,
+      privateConcat: true,
+      myParentQuery: -1,
+      firstPageLoaded: false,
+      pagingLoaded: false,
+      loaded: false,
+      isUserReload: true,
+      fromEmptyViewReload: false,
+      queryFrom: "",
+      listRendering: false,
+      listRenderingTimeout: null
+    };
+  },
+  computed: {
+    pageSize() {
+      return this.defaultPageSize;
+    },
+    finalConcat() {
+      return this.concat && this.privateConcat;
+    },
+    finalUseCache() {
+      if (this.useCache && !this.cacheKey) {
+        uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.consoleErr("use-cache为true时，必须设置cache-key，否则缓存无效！");
+      }
+      return this.useCache && !!this.cacheKey;
+    },
+    finalCacheKey() {
+      if (!this.cacheKey)
+        return null;
+      return `${uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.cachePrefixKey}-${this.cacheKey}`;
+    },
+    isFirstPage() {
+      return this.pageNo === this.defaultPageNo;
+    }
+  },
+  watch: {
+    totalData(newVal, oldVal) {
+      this._totalDataChange(newVal, oldVal);
+    },
+    currentData(newVal, oldVal) {
+      this._currentDataChange(newVal, oldVal);
+    },
+    useChatRecordMode(newVal, oldVal) {
+      if (newVal) {
+        this.nLoadingMoreFixedHeight = false;
+      }
+    },
+    value: {
+      handler(newVal) {
+        this.realTotalData = newVal;
+      },
+      immediate: true
+    },
+    modelValue: {
+      handler(newVal) {
+        this.realTotalData = newVal;
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    //请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging处理，第一个参数为请求结果数组，第二个参数为是否成功(默认是是）
+    complete(data, success = true) {
+      this.customNoMore = -1;
+      return this.addData(data, success);
+    },
+    //【保证数据一致】请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging处理，第一个参数为请求结果数组，第二个参数为dataKey，需与:data-key绑定的一致，第三个参数为是否成功(默认为是）
+    completeByKey(data, dataKey = null, success = true) {
+      if (dataKey !== null && this.dataKey !== null && dataKey !== this.dataKey) {
+        if (this.isFirstPage) {
+          this.endRefresh();
+        }
+        return new Promise((resolve) => resolve());
+      }
+      this.customNoMore = -1;
+      return this.addData(data, success);
+    },
+    //【通过total判断是否有更多数据】请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging处理，第一个参数为请求结果数组，第二个参数为total(列表总数)，第三个参数为是否成功(默认为是）
+    completeByTotal(data, total, success = true) {
+      if (total == "undefined") {
+        this.customNoMore = -1;
+      } else {
+        const dataTypeRes = this._checkDataType(data, success, false);
+        data = dataTypeRes.data;
+        success = dataTypeRes.success;
+        if (total >= 0 && success) {
+          return new Promise((resolve, reject) => {
+            this.$nextTick(() => {
+              let nomore = false;
+              let realTotalDataCount = this.realTotalData.length;
+              if (this.pageNo == this.defaultPageNo) {
+                realTotalDataCount = 0;
+              }
+              const dataLength = this.privateConcat ? data.length : 0;
+              let exceedCount = realTotalDataCount + dataLength - total;
+              if (exceedCount >= 0) {
+                nomore = true;
+                exceedCount = this.defaultPageSize - exceedCount;
+                if (exceedCount > 0 && exceedCount < data.length && this.privateConcat) {
+                  data = data.splice(0, exceedCount);
+                }
+              }
+              this.completeByNoMore(data, nomore, success).then((res) => resolve(res)).catch(() => reject());
+            });
+          });
+        }
+      }
+      return this.addData(data, success);
+    },
+    //【自行判断是否有更多数据】请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging处理，第一个参数为请求结果数组，第二个参数为是否有更多数据，第三个参数为是否成功(默认是是）
+    completeByNoMore(data, nomore, success = true) {
+      if (nomore != "undefined") {
+        this.customNoMore = nomore == true ? 1 : 0;
+      }
+      return this.addData(data, success);
+    },
+    //与上方complete方法功能一致，新版本中设置服务端回调数组请使用complete方法
+    addData(data, success = true) {
+      if (!this.fromCompleteEmit) {
+        this.disabledCompleteEmit = true;
+        this.fromCompleteEmit = false;
+      }
+      const currentTimeStamp = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime();
+      const disTime = currentTimeStamp - this.requestTimeStamp;
+      let minDelay = this.minDelay;
+      if (this.isFirstPage && this.finalShowRefresherWhenReload) {
+        minDelay = Math.max(400, minDelay);
+      }
+      const addDataDalay = this.requestTimeStamp > 0 && disTime < minDelay ? minDelay - disTime : 0;
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this._addData(data, success, false);
+        }, this.delay > 0 ? this.delay : addDataDalay);
+      });
+      return new Promise((resolve, reject) => {
+        this.dataPromiseResultMap.complete = { resolve, reject };
+      });
+    },
+    //从顶部添加数据，不会影响分页的pageNo和pageSize
+    addDataFromTop(data, toTop = true, toTopWithAnimate = true) {
+      let dataType = Object.prototype.toString.call(data);
+      if (dataType !== "[object Array]") {
+        data = [data];
+      }
+      this.totalData = [...data, ...this.totalData];
+      if (toTop) {
+        setTimeout(() => {
+          this._scrollToTop(toTopWithAnimate);
+        }, uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.delayTime);
+      }
+    },
+    //重新设置列表数据，调用此方法不会影响pageNo和pageSize，也不会触发请求。适用场景：当需要删除列表中某一项时，将删除对应项后的数组通过此方法传递给z-paging。(当出现类似的需要修改列表数组的场景时，请使用此方法，请勿直接修改page中:list.sync绑定的数组)
+    resetTotalData(data) {
+      this.isTotalChangeFromAddData = true;
+      let dataType = Object.prototype.toString.call(data);
+      if (dataType !== "[object Array]") {
+        data = [data];
+      }
+      this.totalData = data;
+    },
+    //添加聊天记录
+    addChatRecordData(data, toBottom = true, toBottomWithAnimate = true) {
+      let dataType = Object.prototype.toString.call(data);
+      if (dataType !== "[object Array]") {
+        data = [data];
+      }
+      if (!this.useChatRecordMode)
+        return;
+      this.isTotalChangeFromAddData = true;
+      this.totalData = [...this.totalData, ...data];
+      if (toBottom) {
+        setTimeout(() => {
+          this._scrollToBottom(toBottomWithAnimate);
+        }, uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.delayTime);
+      }
+    },
+    //设置本地分页数据，请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging作分页处理（若调用了此方法，则上拉加载更多时内部会自动分页，不会触发@query所绑定的事件）
+    setLocalPaging(data, success = true) {
+      this.isLocalPaging = true;
+      this.$nextTick(() => {
+        this._addData(data, success, true);
+      });
+      return new Promise((resolve, reject) => {
+        this.dataPromiseResultMap.localPaging = { resolve, reject };
+      });
+    },
+    //重新加载分页数据，pageNo会恢复为默认值，相当于下拉刷新的效果(animate为true时会展示下拉刷新动画，默认为false)
+    reload(animate = this.showRefresherWhenReload) {
+      if (animate) {
+        this.privateShowRefresherWhenReload = animate;
+        this.isUserPullDown = true;
+      }
+      this.listRendering = true;
+      this.$nextTick(() => {
+        this._preReload(animate, false);
+      });
+      return new Promise((resolve, reject) => {
+        this.dataPromiseResultMap.reload = { resolve, reject };
+      });
+    },
+    //刷新列表数据，pageNo和pageSize不会重置，列表数据会重新从服务端获取。必须保证@query绑定的方法中的pageNo和pageSize和传给服务端的一致
+    refresh() {
+      if (!this.realTotalData.length) {
+        return this.reload();
+      }
+      const disPageNo = this.pageNo - this.defaultPageNo + 1;
+      if (disPageNo >= 1) {
+        this.loading = true;
+        this.privateConcat = false;
+        const totalPageSize = disPageNo * this.pageSize;
+        this.currentRefreshPageSize = totalPageSize;
+        this._emitQuery(this.defaultPageNo, totalPageSize, uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.QueryFrom.Refresh);
+        this._callMyParentQuery(this.defaultPageNo, totalPageSize);
+      }
+      return new Promise((resolve, reject) => {
+        this.dataPromiseResultMap.reload = { resolve, reject };
+      });
+    },
+    //手动更新列表缓存数据，将自动截取v-model绑定的list中的前pageSize条覆盖缓存，请确保在list数据更新到预期结果后再调用此方法
+    updateCache() {
+      if (this.finalUseCache && this.totalData.length) {
+        this._saveLocalCache(this.totalData.slice(0, Math.min(this.totalData.length, this.pageSize)));
+      }
+    },
+    //清空分页数据
+    clean() {
+      this._reload(true);
+      this._addData([], true, false);
+    },
+    //清空分页数据
+    clear() {
+      this.clean();
+    },
+    //手动触发滚动到顶部加载更多，聊天记录模式时有效
+    doChatRecordLoadMore() {
+      this.useChatRecordMode && this._onLoadingMore("click");
+    },
+    //reload之前的一些处理
+    _preReload(animate = this.showRefresherWhenReload, isFromMounted = true) {
+      this.isUserReload = true;
+      this.loadingType = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.LoadingType.Refresher;
+      if (animate) {
+        this.privateShowRefresherWhenReload = animate;
+        if (this.useCustomRefresher) {
+          this._doRefresherRefreshAnimate();
+        } else {
+          this.refresherTriggered = true;
+        }
+      } else {
+        this._refresherEnd(false, false, false, false);
+      }
+      this._reload(false, isFromMounted);
+    },
+    //重新加载分页数据
+    _reload(isClean = false, isFromMounted = false, isUserPullDown = false) {
+      this.isAddedData = false;
+      this.insideOfPaging = -1;
+      this.cacheScrollNodeHeight = -1;
+      this.pageNo = this.defaultPageNo;
+      this._cleanRefresherEndTimeout();
+      !this.privateShowRefresherWhenReload && !isClean && this._startLoading(true);
+      this.firstPageLoaded = true;
+      this.isTotalChangeFromAddData = false;
+      if (!this.isSettingCacheList) {
+        this.totalData = [];
+      }
+      if (!isClean) {
+        this._emitQuery(this.pageNo, this.defaultPageSize, isUserPullDown ? uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.QueryFrom.UserPullDown : uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.QueryFrom.Reload);
+        let delay = 0;
+        setTimeout(() => {
+          this._callMyParentQuery();
+        }, delay);
+        if (!isFromMounted && this.autoScrollToTopWhenReload) {
+          this._scrollToTop(false);
+        }
+      }
+      this.$nextTick(() => {
+      });
+    },
+    //处理服务端返回的数组
+    _addData(data, success, isLocal) {
+      this.isAddedData = true;
+      this.fromEmptyViewReload = false;
+      this.isTotalChangeFromAddData = true;
+      this.refresherTriggered = false;
+      this._endSystemLoadingAndRefresh();
+      const tempIsUserPullDown = this.isUserPullDown;
+      if (this.showRefresherUpdateTime && this.isFirstPage) {
+        uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.setRefesrherTime(uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime(), this.refresherUpdateTimeKey);
+        this.$refs.refresh && this.$refs.refresh.updateTime();
+      }
+      if (!isLocal && tempIsUserPullDown && this.isFirstPage) {
+        this.isUserPullDown = false;
+      }
+      let dataTypeRes = this._checkDataType(data, success, isLocal);
+      data = dataTypeRes.data;
+      success = dataTypeRes.success;
+      let delayTime = uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.delayTime;
+      this.loadingForNow = false;
+      setTimeout(() => {
+        this.pagingLoaded = true;
+        this.$nextTick(() => {
+          !isLocal && this._refresherEnd(delayTime > 0, true, tempIsUserPullDown);
+        });
+      }, delayTime);
+      if (this.isFirstPage) {
+        this.isLoadFailed = !success;
+        this.$emit("isLoadFailedChange", this.isLoadFailed);
+        if (this.finalUseCache && success && (this.cacheMode === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.CacheMode.Always ? true : this.isSettingCacheList)) {
+          this._saveLocalCache(data);
+        }
+      }
+      this.isSettingCacheList = false;
+      if (success) {
+        if (!(this.privateConcat === false && this.loadingStatus === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.NoMore)) {
+          this.loadingStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.Default;
+        }
+        if (isLocal) {
+          this.totalLocalPagingList = data;
+          const localPageNo = this.defaultPageNo;
+          const localPageSize = this.queryFrom !== uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.QueryFrom.Refresh ? this.defaultPageSize : this.currentRefreshPageSize;
+          this._localPagingQueryList(localPageNo, localPageSize, 0, (res) => {
+            this.completeByTotal(res, this.totalLocalPagingList.length);
+          });
+        } else {
+          let dataChangeDelayTime = 0;
+          setTimeout(() => {
+            this._currentDataChange(data, this.currentData);
+            this._callDataPromise(true, this.totalData);
+          }, dataChangeDelayTime);
+        }
+      } else {
+        this._currentDataChange(data, this.currentData);
+        this._callDataPromise(false);
+        this.loadingStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.Fail;
+        if (this.loadingType === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.LoadingType.LoadingMore) {
+          this.pageNo--;
+        }
+      }
+    },
+    //所有数据改变时调用
+    _totalDataChange(newVal, oldVal, eventThrow = true) {
+      if ((!this.isUserReload || !this.autoCleanListWhenReload) && this.firstPageLoaded && !newVal.length && oldVal.length) {
+        return;
+      }
+      this._doCheckScrollViewShouldFullHeight(newVal);
+      if (!this.realTotalData.length && !newVal.length) {
+        eventThrow = false;
+      }
+      this.realTotalData = newVal;
+      if (eventThrow) {
+        this.$emit("input", newVal);
+        this.$emit("update:modelValue", newVal);
+        this.$emit("update:list", newVal);
+        this.$emit("listChange", newVal);
+        this._callMyParentList(newVal);
+      }
+      this.firstPageLoaded = false;
+      this.isTotalChangeFromAddData = false;
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this._getNodeClientRect(".zp-paging-container-content").then((res) => {
+            if (res) {
+              this.$emit("contentHeightChanged", res[0].height);
+            }
+          });
+        }, this.isIos ? 100 : 300);
+      });
+    },
+    //当前数据改变时调用
+    _currentDataChange(newVal, oldVal) {
+      newVal = [...newVal];
+      if (!this.isFirstPage) {
+        this.listRendering = true;
+        this.listRenderingTimeout && clearTimeout(this.listRenderingTimeout);
+        this.$nextTick(() => {
+          this.listRenderingTimeout = setTimeout(() => {
+            this.listRendering = false;
+          }, uni_modules_zPaging_components_zPaging_js_zPagingConstant.c.delayTime);
+        });
+      } else {
+        this.listRendering = false;
+      }
+      this.finalUseVirtualList && this._setCellIndex(newVal, this.totalData.length === 0);
+      this.useChatRecordMode && newVal.reverse();
+      if (this.isFirstPage && this.finalConcat) {
+        this.totalData = [];
+      }
+      if (this.customNoMore !== -1) {
+        if (this.customNoMore === 1 || !newVal.length) {
+          this.loadingStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.NoMore;
+        }
+      } else {
+        if (!newVal.length || newVal.length && newVal.length < this.defaultPageSize) {
+          this.loadingStatus = uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.NoMore;
+        }
+      }
+      if (!this.totalData.length) {
+        if (this.finalConcat) {
+          this.totalData = newVal;
+        }
+        if (this.useChatRecordMode) {
+          this.$nextTick(() => {
+            this._scrollToBottom(false);
+          });
+        }
+      } else {
+        if (this.useChatRecordMode) {
+          const idIndex = newVal.length;
+          let idIndexStr = `z-paging-${idIndex}`;
+          this.totalData = [...newVal, ...this.totalData];
+          if (this.pageNo !== this.defaultPageNo) {
+            this.privateScrollWithAnimation = 0;
+            this.$emit("update:chatIndex", idIndex);
+            setTimeout(() => {
+              this._scrollIntoView(idIndexStr, 30 + Math.max(0, this.cacheTopHeight), false, () => {
+                this.$emit("update:chatIndex", 0);
+              });
+            }, this.usePageScroll ? this.isIos ? 50 : 100 : 200);
+          } else {
+            this.$nextTick(() => {
+              this._scrollToBottom(false);
+            });
+          }
+        } else {
+          if (this.finalConcat) {
+            const currentScrollTop = this.oldScrollTop;
+            this.totalData = [...this.totalData, ...newVal];
+            if (!this.isIos && !this.refresherOnly && !this.usePageScroll && newVal.length) {
+              this.loadingMoreTimeStamp = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime();
+              this.$nextTick(() => {
+                this.scrollToY(currentScrollTop);
+              });
+            }
+          } else {
+            this.totalData = newVal;
+          }
+        }
+      }
+      this.privateConcat = true;
+    },
+    //本地分页请求
+    _localPagingQueryList(pageNo, pageSize, localPagingLoadingTime, callback) {
+      pageNo = Math.max(1, pageNo);
+      pageSize = Math.max(1, pageSize);
+      const totalPagingList = [...this.totalLocalPagingList];
+      const pageNoIndex = (pageNo - 1) * pageSize;
+      const finalPageNoIndex = Math.min(totalPagingList.length, pageNoIndex + pageSize);
+      const resultPagingList = totalPagingList.splice(pageNoIndex, finalPageNoIndex - pageNoIndex);
+      setTimeout(() => callback(resultPagingList), localPagingLoadingTime);
+    },
+    //存储列表缓存数据
+    _saveLocalCache(data) {
+      common_vendor.index.setStorageSync(this.finalCacheKey, data);
+    },
+    //通过缓存数据填充列表数据
+    _setListByLocalCache() {
+      this.totalData = common_vendor.index.getStorageSync(this.finalCacheKey) || [];
+      this.isSettingCacheList = true;
+    },
+    //修改父view的list
+    _callMyParentList(newVal) {
+      if (this.autowireListName.length) {
+        const myParent = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getParent(this.$parent);
+        if (myParent && myParent[this.autowireListName]) {
+          myParent[this.autowireListName] = newVal;
+        }
+      }
+    },
+    //调用父view的query
+    _callMyParentQuery(customPageNo = 0, customPageSize = 0) {
+      if (this.autowireQueryName) {
+        if (this.myParentQuery === -1) {
+          const myParent = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getParent(this.$parent);
+          if (myParent && myParent[this.autowireQueryName]) {
+            this.myParentQuery = myParent[this.autowireQueryName];
+          }
+        }
+        if (this.myParentQuery !== -1) {
+          if (customPageSize > 0) {
+            this.myParentQuery(customPageNo, customPageSize);
+          } else {
+            this.myParentQuery(this.pageNo, this.defaultPageSize);
+          }
+        }
+      }
+    },
+    //emit query事件
+    _emitQuery(pageNo, pageSize, from) {
+      this.queryFrom = from;
+      this.requestTimeStamp = uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.getTime();
+      this.$emit("query", ...uni_modules_zPaging_components_zPaging_js_zPagingInterceptor.interceptor._handleQuery(pageNo, pageSize, from));
+    },
+    //触发数据改变promise
+    _callDataPromise(success, totalList) {
+      for (const key in this.dataPromiseResultMap) {
+        const obj = this.dataPromiseResultMap[key];
+        success ? !!obj && obj.resolve({ totalList, noMore: this.loadingStatus === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.NoMore }) : !!obj && obj.reject();
+      }
+    },
+    //检查complete data的类型
+    _checkDataType(data, success, isLocal) {
+      const dataType = Object.prototype.toString.call(data);
+      if (dataType === "[object Boolean]") {
+        success = data;
+        data = [];
+      } else if (dataType === "[object Null]") {
+        data = [];
+      } else if (dataType !== "[object Array]") {
+        data = [];
+        if (dataType !== "[object Undefined]") {
+          uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.consoleErr(`${isLocal ? "setLocalPaging" : "complete"}参数类型不正确，第一个参数类型必须为Array!`);
+        }
+      }
+      return { data, success };
+    }
+  }
+};
+exports.dataHandleModule = dataHandleModule;

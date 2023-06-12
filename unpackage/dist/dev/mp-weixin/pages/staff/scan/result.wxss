@@ -1,1 +1,24 @@
-.icon-box.data-v-23f71271{display:flex;flex-direction:row;align-self:center;align-items:center;margin-top:74rpx}.icon-box image.data-v-23f71271{width:54rpx;height:54rpx}.icon-box text.data-v-23f71271{font-size:32rpx;font-weight:600;color:#333134;margin-left:12rpx}.tip.data-v-23f71271{font-size:32rpx;font-weight:400;color:#333134;margin-top:52rpx;text-align:center}
+.icon-box.data-v-23f71271 {
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  align-items: center;
+  margin-top: 74rpx;
+}
+.icon-box image.data-v-23f71271 {
+  width: 54rpx;
+  height: 54rpx;
+}
+.icon-box text.data-v-23f71271 {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333134;
+  margin-left: 12rpx;
+}
+.tip.data-v-23f71271 {
+  font-size: 32rpx;
+  font-weight: 400;
+  color: #333134;
+  margin-top: 52rpx;
+  text-align: center;
+}

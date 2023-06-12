@@ -1,1 +1,163 @@
-"use strict";const t=require("../utils/request.js");function c(){return t.get("/web/index/banner")}function s(e,n,i,o,u){let r="";return u&&(r="Recommend"),t.get("/web/building/index",{page:e,limit:n,name:i,province:o,type:r})}function d(e){return t.get("/web/building/detail",{id:e})}function f(e,n){return t.get("/web/promotion/index",{page:e,limit:n})}function b(e){return t.get("/web/promotion/detail",{id:e})}function g(e,n){return t.get("/web/promotion/log",{page:e,limit:n})}function a(e,n){return t.post("/web/promotion/prof",{promotion_id:e,picture:n})}function m(e,n){return t.get("/web/activity/index",{page:e,limit:n})}function p(e,n){return t.postWithoutToken("/web/user/login2",{code:e,phonecode:n})}function l(e){return t.upload("/index/file/uploadfile",e)}function h(e,n,i,o){return t.post("/web/user/cardModify",{name:e,phone:n,company:i,address:o})}function w(){return t.post("/web/user/getCard",{})}function C(){return t.get("/web/user/company",{})}function k(e,n){return t.post("/web/user/feedBack",{content:e,contact:n})}function y(e,n){return t.post("/web/building/salesCheck",{scene:e,picture:n})}function _(e){return t.post("/web/building/CustomerCheck",{scene:e,debug:1})}function v(e,n){return t.get("/web/building/log",{page:e,limit:n})}function x(){return t.get("/web/user/getUserInfo",{})}function L(){return t.get("/web/channel/list",{})}function U(e,n){return t.get("/web/building/getCheckCode",{building_id:e,channel_id:n})}function B(e){return t.post("/web/promotion/verifyNumber",{code:e})}function P(e){return t.post("/web/promotion/verifyCode",{id:e})}function R(e){return t.get("/web/building/getScanLog",{scene:e})}function S(e,n,i,o){return t.post("/web/staff/check",{building_id:e,channel_id:n,phone:i,description:o})}const q={uploadFile:l,getBanner:c,fetchBuildingList:s,fetchBuildingDetail:d,fetchPromotionList:f,fetchPromotionDetail:b,fetchPromotionRecord:g,submitPromotion:a,fetchActivityList:m,submitLogin:p,submitUserCard:h,fetchUserCard:w,fetchUserCompany:C,submitFeedback:k,submitSalesCheck:y,submitCustomCheck:_,fetchCheckRecord:v,fetchUserInfo:x,fetchChannel:L,fetchCheckCode:U,submitVerifyNumber:B,submitVerifyCode:P,fetchScanRecord:R,submitCustomerCheck:S};exports.api=q;
+"use strict";
+const utils_request = require("../utils/request.js");
+function getBanner() {
+  return utils_request.get("/web/index/banner");
+}
+function fetchBuildingList(page, pageSize, name, province, isRecommend) {
+  let recommend = "";
+  if (isRecommend) {
+    recommend = "Recommend";
+  }
+  return utils_request.get("/web/building/index", {
+    page,
+    limit: pageSize,
+    name,
+    province,
+    type: recommend
+  });
+}
+function fetchBuildingDetail(id) {
+  return utils_request.get("/web/building/detail", {
+    id
+  });
+}
+function fetchPromotionList(page, pageSize) {
+  return utils_request.get("/web/promotion/index", {
+    page,
+    limit: pageSize
+  });
+}
+function fetchPromotionDetail(id) {
+  return utils_request.get("/web/promotion/detail", {
+    id
+  });
+}
+function fetchPromotionRecord(page, pageSize) {
+  return utils_request.get("/web/promotion/log", {
+    page,
+    limit: pageSize
+  });
+}
+function submitPromotion(id, url) {
+  return utils_request.post("/web/promotion/prof", {
+    promotion_id: id,
+    picture: url
+  });
+}
+function fetchActivityList(page, pageSize) {
+  return utils_request.get("/web/activity/index", {
+    page,
+    limit: pageSize
+  });
+}
+function submitLogin(loginCode, phoneCode) {
+  return utils_request.postWithoutToken("/web/user/login2", {
+    code: loginCode,
+    phonecode: phoneCode
+  });
+}
+function uploadFile(filePath) {
+  return utils_request.upload("/index/file/uploadfile", filePath);
+}
+function submitUserCard(name, phone, company, address) {
+  return utils_request.post("/web/user/cardModify", {
+    name,
+    phone,
+    company,
+    address
+  });
+}
+function fetchUserCard() {
+  return utils_request.post("/web/user/getCard", {});
+}
+function fetchUserCompany() {
+  return utils_request.get("/web/user/company", {});
+}
+function submitFeedback(content, phone) {
+  return utils_request.post("/web/user/feedBack", {
+    content,
+    contact: phone
+  });
+}
+function submitSalesCheck(scene, picture) {
+  return utils_request.post("/web/building/salesCheck", {
+    scene,
+    picture
+  });
+}
+function submitCustomCheck(scene) {
+  return utils_request.post("/web/building/CustomerCheck", {
+    scene,
+    debug: 1
+  });
+}
+function fetchCheckRecord(page, pageSize) {
+  return utils_request.get("/web/building/log", {
+    page,
+    limit: pageSize
+  });
+}
+function fetchUserInfo() {
+  return utils_request.get("/web/user/getUserInfo", {});
+}
+function fetchChannel() {
+  return utils_request.get("/web/channel/list", {});
+}
+function fetchCheckCode(buildingId, channelId) {
+  return utils_request.get("/web/building/getCheckCode", {
+    building_id: buildingId,
+    channel_id: channelId
+  });
+}
+function submitVerifyNumber(code) {
+  return utils_request.post("/web/promotion/verifyNumber", {
+    code
+  });
+}
+function submitVerifyCode(codeId) {
+  return utils_request.post("/web/promotion/verifyCode", {
+    id: codeId
+  });
+}
+function fetchScanRecord(scene) {
+  return utils_request.get("/web/building/getScanLog", {
+    scene
+  });
+}
+function submitCustomerCheck(buildingId, channelId, phone, note) {
+  return utils_request.post("/web/staff/check", {
+    building_id: buildingId,
+    channel_id: channelId,
+    phone,
+    description: note
+  });
+}
+const api = {
+  uploadFile,
+  getBanner,
+  fetchBuildingList,
+  fetchBuildingDetail,
+  fetchPromotionList,
+  fetchPromotionDetail,
+  fetchPromotionRecord,
+  submitPromotion,
+  fetchActivityList,
+  submitLogin,
+  submitUserCard,
+  fetchUserCard,
+  fetchUserCompany,
+  submitFeedback,
+  submitSalesCheck,
+  submitCustomCheck,
+  fetchCheckRecord,
+  fetchUserInfo,
+  // fetchBuildingList,
+  fetchChannel,
+  fetchCheckCode,
+  submitVerifyNumber,
+  submitVerifyCode,
+  fetchScanRecord,
+  // submitLogin,
+  submitCustomerCheck
+};
+exports.api = api;

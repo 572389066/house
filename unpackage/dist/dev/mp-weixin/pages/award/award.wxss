@@ -1,1 +1,37 @@
-.award.data-v-9350b027{width:100%;min-height:100vh;overflow:hidden;background:url(http://zykjstore.oss-cn-chengdu.aliyuncs.com/upload/model/20230301_16776689413.png) no-repeat;background-position:center;background-size:cover}.award .cont.data-v-9350b027{padding:32rpx 24rpx;overflow:hidden}.award .cont .ul a.data-v-9350b027,.award .cont .ul .li.data-v-9350b027{position:relative;width:100%;height:390rpx;background:#fff;margin-bottom:20rpx;border-radius:12rpx;overflow:hidden}.award .cont .ul a .name.data-v-9350b027,.award .cont .ul .li .name.data-v-9350b027{position:absolute;left:0;bottom:0;width:100%;height:88rpx;display:flex;align-items:center;padding:0 24rpx;font-size:32rpx;color:#fff;font-weight:600;background:linear-gradient(rgba(255,255,255,0),#000000)}
+.award.data-v-9350b027 {
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: url('http://zykjstore.oss-cn-chengdu.aliyuncs.com/upload/model/20230301_16776689413.png') no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.award .cont.data-v-9350b027 {
+  padding: 32rpx 24rpx;
+  overflow: hidden;
+}
+.award .cont .ul a.data-v-9350b027,
+.award .cont .ul .li.data-v-9350b027 {
+  position: relative;
+  width: 100%;
+  height: 390rpx;
+  background: #fff;
+  margin-bottom: 20rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.award .cont .ul a .name.data-v-9350b027,
+.award .cont .ul .li .name.data-v-9350b027 {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(rgba(255, 255, 255, 0), #000000);
+}

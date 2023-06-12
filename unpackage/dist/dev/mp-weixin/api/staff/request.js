@@ -1,1 +1,155 @@
-"use strict";const l=require("../../common/vendor.js"),d=require("../../utils/cache.js");let u="";u="https://houseapi.cqsoftware.cn";function p(t,s){let n=d.cache.getStaffToken(),c={"content-type":"application/x-www-form-urlencoded"};return n&&n!=""&&(c.staff=n),new Promise((o,a)=>{l.index.request({url:u+t,data:s,header:c,method:"POST",success:e=>{console.log("post request success: "+JSON.stringify(e));let i=e.data;i.code===1?o(i.return):(a(i),f(i))},fail:e=>{e&&e.response&&(a(e.response),f(e.response))}})})}function r(t,s={}){let n=d.cache.getStaffToken(),c={Accept:"application/json","Content-Type":"application/x-www-form-urlencoded"};return n&&n!=""&&(c.staff=n),console.log("staff --->>>token= "+n),new Promise((o,a)=>{l.index.request({url:u+t,data:s,header:c,method:"GET",success:e=>{console.log("get request success: "+JSON.stringify(e));let i=e.data;i.code==1?o(i.return):(a(i),f(i))},fail:e=>{console.log("get request fail: "+JSON.stringify(e)),e&&e.response&&(a(e.response),f(e.response))}})})}function g(t,s){return new Promise((n,c)=>{l.index.uploadFile({url:u+t,filePath:s,name:"file",formData:{},success:o=>{let a=JSON.parse(o.data);a.code===1?n(a.return):(c(a),f(a))},fail:o=>{o&&o.response&&(c(o),f(o.response))}})})}const f=t=>{let s="";if(t.msg&&t.msg!="")s=t.msg;else switch(t.code){case 300:s="未授权，请登录";break;case 400:s="请求参数错误";break;case 403:s="跨域拒绝访问";break;case 404:s="请求地址不存在";break;case 500:s="服务器内部错误";break;case 504:s="请求超时";break;default:s="请求失败";break}l.index.showToast({title:s,icon:"none",duration:2e3,complete:function(){setTimeout(function(){l.index.hideToast()},2e3)}}),t.code==300&&setTimeout(function(){h()},2e3)};function h(){d.cache.saveStaffToken(""),l.index.navigateTo({url:"/pages/staff/login/login"})}exports.get=r;exports.post=p;exports.upload=g;
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const utils_cache = require("../../utils/cache.js");
+let baseURL = "";
+{
+  baseURL = "https://houseapi.cqsoftware.cn";
+}
+function post(url, params) {
+  let token = utils_cache.cache.getStaffToken();
+  let header = {
+    "content-type": "application/x-www-form-urlencoded"
+  };
+  if (token && token != "") {
+    header["staff"] = token;
+  }
+  return new Promise((resolve, reject) => {
+    common_vendor.index.request({
+      url: baseURL + url,
+      data: params,
+      header,
+      method: "POST",
+      success: (response) => {
+        console.log("post request success: " + JSON.stringify(response));
+        let res = response.data;
+        if (res.code === 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        if (error && error.response) {
+          reject(error.response);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+function get(url, params = {}) {
+  let token = utils_cache.cache.getStaffToken();
+  let header = {
+    "Accept": "application/json",
+    "Content-Type": "application/x-www-form-urlencoded"
+  };
+  if (token && token != "") {
+    header["staff"] = token;
+  }
+  console.log("staff --->>>token= " + token);
+  return new Promise((resolve, reject) => {
+    common_vendor.index.request({
+      url: baseURL + url,
+      data: params,
+      header,
+      method: "GET",
+      success: (response) => {
+        console.log("get request success: " + JSON.stringify(response));
+        let res = response.data;
+        if (res.code == 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        console.log("get request fail: " + JSON.stringify(error));
+        if (error && error.response) {
+          reject(error.response);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+function upload(url, filePath) {
+  return new Promise((resolve, reject) => {
+    common_vendor.index.uploadFile({
+      url: baseURL + url,
+      filePath,
+      name: "file",
+      formData: {},
+      success: (response) => {
+        let res = JSON.parse(response.data);
+        if (res.code === 1) {
+          resolve(res.return);
+        } else {
+          reject(res);
+          showError(res);
+        }
+      },
+      fail: (error) => {
+        if (error && error.response) {
+          reject(error);
+          showError(error.response);
+        }
+      }
+    });
+  });
+}
+const showError = (error) => {
+  let errorMsg = "";
+  if (error.msg && error.msg != "") {
+    errorMsg = error.msg;
+  } else {
+    switch (error.code) {
+      case 300:
+        errorMsg = "未授权，请登录";
+        break;
+      case 400:
+        errorMsg = "请求参数错误";
+        break;
+      case 403:
+        errorMsg = "跨域拒绝访问";
+        break;
+      case 404:
+        errorMsg = "请求地址不存在";
+        break;
+      case 500:
+        errorMsg = "服务器内部错误";
+        break;
+      case 504:
+        errorMsg = "请求超时";
+        break;
+      default:
+        errorMsg = "请求失败";
+        break;
+    }
+  }
+  common_vendor.index.showToast({
+    title: errorMsg,
+    icon: "none",
+    duration: 2e3,
+    complete: function() {
+      setTimeout(function() {
+        common_vendor.index.hideToast();
+      }, 2e3);
+    }
+  });
+  if (error.code == 300) {
+    setTimeout(function() {
+      onTokenInvalid();
+    }, 2e3);
+  }
+};
+function onTokenInvalid() {
+  utils_cache.cache.saveStaffToken("");
+  common_vendor.index.navigateTo({
+    url: "/pages/staff/login/login"
+  });
+}
+exports.get = get;
+exports.post = post;
+exports.upload = upload;

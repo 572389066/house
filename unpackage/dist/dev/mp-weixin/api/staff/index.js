@@ -1,1 +1,92 @@
-"use strict";const t=require("./request.js");function c(e){return t.upload("/index/file/uploadfile",e)}function s(e,n,i="",r="",f=""){let u="";return f&&(u="Recommend"),t.get("/web/building/index",{page:e,limit:n,name:i,province:r,type:u})}function d(){return t.get("/web/channel/list",{})}function a(e,n){return t.get("/web/building/getCheckCode",{building_id:e,channel_id:n})}function l(e){return t.post("/web/promotion/verifyNumber",{code:e})}function b(e){return t.post("/web/promotion/verifyCode",{id:e})}function m(e){return t.get("/web/building/getScanLog",{scene:e})}function p(e,n,i){return t.post("/web/staff/login2",{username:e,password:n,code:i})}function g(e,n,i,r){return t.post("/web/staff/check",{building_id:e,channel_id:n,phone:i,description:r})}function h(e,n,i="",r="",f="",u="",o=""){return t.get("/web/staff/myCustomers",{page:e,limit:n,building_id:i,user_name:r,date:f,channel_id:u,type:o})}function w(){return t.get("/web/staff/getAllUser",{})}function C(e,n){return t.post("/web/staff/updcrmstaff",{id:e,staff_id:n})}const _={uploadFile:c,fetchBuildingList:s,fetchChannel:d,fetchCheckCode:a,submitVerifyNumber:l,submitVerifyCode:b,fetchScanRecord:m,submitLogin:p,submitCustomerCheck:g,fetchCustomerList:h,fetchStaff:w,submitTransfer:C};exports.staffApi=_;
+"use strict";
+const api_staff_request = require("./request.js");
+function uploadFile(filePath) {
+  return api_staff_request.upload("/index/file/uploadfile", filePath);
+}
+function fetchBuildingList(page, pageSize, name = "", province = "", isRecommend = "") {
+  let recommend = "";
+  if (isRecommend) {
+    recommend = "Recommend";
+  }
+  return api_staff_request.get("/web/building/index", {
+    page,
+    limit: pageSize,
+    name,
+    province,
+    type: recommend
+  });
+}
+function fetchChannel() {
+  return api_staff_request.get("/web/channel/list", {});
+}
+function fetchCheckCode(buildingId, channelId) {
+  return api_staff_request.get("/web/building/getCheckCode", {
+    building_id: buildingId,
+    channel_id: channelId
+  });
+}
+function submitVerifyNumber(code) {
+  return api_staff_request.post("/web/promotion/verifyNumber", {
+    code
+  });
+}
+function submitVerifyCode(codeId) {
+  return api_staff_request.post("/web/promotion/verifyCode", {
+    id: codeId
+  });
+}
+function fetchScanRecord(scene) {
+  return api_staff_request.get("/web/building/getScanLog", {
+    scene
+  });
+}
+function submitLogin(userName, password, code) {
+  return api_staff_request.post("/web/staff/login2", {
+    username: userName,
+    password,
+    code
+  });
+}
+function submitCustomerCheck(buildingId, channelId, phone, note) {
+  return api_staff_request.post("/web/staff/check", {
+    building_id: buildingId,
+    channel_id: channelId,
+    phone,
+    description: note
+  });
+}
+function fetchCustomerList(page, pageSize, buildingId = "", customerName = "", date = "", channel = "", type = "") {
+  return api_staff_request.get("/web/staff/myCustomers", {
+    page,
+    limit: pageSize,
+    building_id: buildingId,
+    user_name: customerName,
+    date,
+    channel_id: channel,
+    type
+  });
+}
+function fetchStaff() {
+  return api_staff_request.get("/web/staff/getAllUser", {});
+}
+function submitTransfer(id, staffId) {
+  return api_staff_request.post("/web/staff/updcrmstaff", {
+    id,
+    staff_id: staffId
+  });
+}
+const staffApi = {
+  uploadFile,
+  fetchBuildingList,
+  fetchChannel,
+  fetchCheckCode,
+  submitVerifyNumber,
+  submitVerifyCode,
+  fetchScanRecord,
+  submitLogin,
+  submitCustomerCheck,
+  fetchCustomerList,
+  fetchStaff,
+  submitTransfer
+};
+exports.staffApi = staffApi;

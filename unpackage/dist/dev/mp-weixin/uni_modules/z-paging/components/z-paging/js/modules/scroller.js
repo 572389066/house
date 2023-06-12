@@ -1,1 +1,366 @@
-"use strict";const h=require("../../../../../../common/vendor.js"),s=require("../z-paging-utils.js"),n=require("../z-paging-enum.js"),a={props:{usePageScroll:{type:Boolean,default:s.u.gc("usePageScroll",!1)},scrollable:{type:Boolean,default:s.u.gc("scrollable",!0)},showScrollbar:{type:Boolean,default:s.u.gc("showScrollbar",!0)},scrollX:{type:Boolean,default:s.u.gc("scrollX",!1)},scrollToTopBounceEnabled:{type:Boolean,default:s.u.gc("scrollToTopBounceEnabled",!1)},scrollToBottomBounceEnabled:{type:Boolean,default:s.u.gc("scrollToBottomBounceEnabled",!0)},scrollWithAnimation:{type:Boolean,default:s.u.gc("scrollWithAnimation",!1)},scrollIntoView:{type:String,default:s.u.gc("scrollIntoView","")}},data(){return{scrollTop:0,oldScrollTop:0,scrollViewStyle:{},scrollViewContainerStyle:{},scrollViewInStyle:{},pageScrollTop:-1,scrollEnable:!0,privateScrollWithAnimation:-1,cacheScrollNodeHeight:-1}},watch:{oldScrollTop(o){!this.usePageScroll&&this._scrollTopChange(o,!1)},pageScrollTop(o){this.usePageScroll&&this._scrollTopChange(o,!0)},usePageScroll:{handler(o){this.loaded&&this.autoHeight&&this._setAutoHeight(!o)},immediate:!0},finalScrollTop(o){this.useChatRecordMode||(this.renderPropScrollTop=o<6?0:10)}},computed:{finalScrollWithAnimation(){if(this.privateScrollWithAnimation!==-1){const o=this.privateScrollWithAnimation===1;return this.privateScrollWithAnimation=-1,o}return this.scrollWithAnimation},finalScrollViewStyle(){return this.superContentZIndex!=1&&(this.scrollViewStyle["z-index"]=this.superContentZIndex,this.scrollViewStyle.position="relative"),this.scrollViewStyle},finalScrollTop(){return this.usePageScroll?this.pageScrollTop:this.oldScrollTop},finalIsOldWebView(){return this.isOldWebView&&!this.usePageScroll}},methods:{scrollToTop(o,t=!0){this.$nextTick(()=>{this._scrollToTop(o,!1)})},scrollToBottom(o,t=!0){this.$nextTick(()=>{this._scrollToBottom(o)})},scrollIntoViewById(o,t,l){this._scrollIntoView(o,t,l)},scrollIntoViewByNodeTop(o,t,l){this.scrollTop=this.oldScrollTop,this.$nextTick(()=>{this._scrollIntoViewByNodeTop(o,t,l)})},scrollToY(o,t,l){this.scrollTop=this.oldScrollTop,this.$nextTick(()=>{this._scrollToY(o,t,l)})},scrollIntoViewByIndex(o,t,l){this._scrollIntoView(o,t,l)},scrollIntoViewByView(o,t,l){this._scrollIntoView(o,t,l)},updatePageScrollTop(o){this.pageScrollTop=o},updatePageScrollTopHeight(){this._updatePageScrollTopOrBottomHeight("top")},updatePageScrollBottomHeight(){this._updatePageScrollTopOrBottomHeight("bottom")},updateLeftAndRightWidth(){this.$nextTick(()=>{this._updateLeftAndRightWidth()})},updateScrollViewScrollTop(o,t=!0){this.privateScrollWithAnimation=t?1:0,this.scrollTop=this.oldScrollTop,this.$nextTick(()=>{this.scrollTop=o,this.oldScrollTop=this.scrollTop})},_onScrollToUpper(){this.$emit("scrolltoupper"),this.$emit("scrollTopChange",0),this.$nextTick(()=>{this.oldScrollTop=0}),this.useChatRecordMode&&this.loadingStatus!==n.Enum.More.NoMore&&this._onLoadingMore("click")},_onScrollToLower(o){(!o.detail||!o.detail.direction||o.detail.direction==="bottom")&&this._onLoadingMore("toBottom")},_scrollToTop(o=!0,t=!0){if(this.usePageScroll){this.$nextTick(()=>{h.index.pageScrollTo({scrollTop:0,duration:o?100:0})});return}this.privateScrollWithAnimation=o?1:0,this.scrollTop=this.oldScrollTop,this.$nextTick(()=>{this.scrollTop=0,this.oldScrollTop=this.scrollTop})},async _scrollToBottom(o=!0){if(this.usePageScroll){this.$nextTick(()=>{h.index.pageScrollTo({scrollTop:Number.MAX_VALUE,duration:o?100:0})});return}try{this.privateScrollWithAnimation=o?1:0;const t=await this._getNodeClientRect(".zp-paging-container"),l=await this._getNodeClientRect(".zp-scroll-view"),e=t?t[0].height:0,i=l?l[0].height:0;e>i&&(this.scrollTop=this.oldScrollTop,this.$nextTick(()=>{this.scrollTop=e-i+this.virtualPlaceholderTopHeight,this.oldScrollTop=this.scrollTop}))}catch{}},_scrollIntoView(o,t=0,l=!1,e){try{this.scrollTop=this.oldScrollTop,this.$nextTick(()=>{this._getNodeClientRect("#"+o.replace("#",""),this.$parent).then(i=>{if(i){let r=i[0].top;this._scrollIntoViewByNodeTop(r,t,l),e&&e()}})})}catch{}},_scrollIntoViewByNodeTop(o,t=0,l=!1){this._scrollToY(o,t,l,!0)},_scrollToY(o,t=0,l=!1,e=!1){this.privateScrollWithAnimation=l?1:0,this.usePageScroll?h.index.pageScrollTo({scrollTop:o-t,duration:l?100:0}):(e&&(o+=this.oldScrollTop),this.scrollTop=o-t,this.oldScrollTop=this.scrollTop)},_scroll(o){this.$emit("scroll",o);const t=o.detail.scrollTop;this.finalUseVirtualList&&this._updateVirtualScroll(t,this.oldScrollTop-t),this.oldScrollTop=t;const l=o.detail.scrollHeight-this.oldScrollTop;!this.isIos&&this._checkScrolledToBottom(l)},_doCheckScrollViewShouldFullHeight(o){this.autoFullHeight&&this.usePageScroll&&this.isTotalChangeFromAddData?this.$nextTick(()=>{this._checkScrollViewShouldFullHeight((t,l)=>{this._preCheckShowNoMoreInside(o,t,l)})}):this._preCheckShowNoMoreInside(o)},async _checkScrollViewShouldFullHeight(o){try{const t=await this._getNodeClientRect(".zp-scroll-view"),l=await this._getNodeClientRect(".zp-paging-container-content");if(!t||!l)return;const e=l[0].height,i=t[0].top;this.isAddedData&&e+i<=this.windowHeight?(this._setAutoHeight(!0,t),o(t,l)):(this._setAutoHeight(!1),o(null,null))}catch{o(null,null)}},_scrollTopChange(o,t){this.$emit("scrollTopChange",o),this.$emit("update:scrollTop",o),this._checkShouldShowBackToTop(o);const l=this.isIos?o>5?6:0:o;t?this.wxsPageScrollTop=l:this.wxsScrollTop=l},_updatePageScrollTopOrBottomHeight(o){if(!this.usePageScroll)return;this._doCheckScrollViewShouldFullHeight(this.realTotalData);const t=`.zp-page-${o}`,l=`margin${o.slice(0,1).toUpperCase()+o.slice(1)}`;let e=this.safeAreaInsetBottom;this.$nextTick(()=>{setTimeout(()=>{this._getNodeClientRect(t).then(r=>{if(r){let c=r[0].height;o==="bottom"?e&&(c+=this.safeAreaBottom):this.cacheTopHeight=c,this.$set(this.scrollViewStyle,l,`${c}px`)}else e&&this.$set(this.scrollViewStyle,l,`${this.safeAreaBottom}px`)})},0)})},_updateLeftAndRightWidth(){this.finalIsOldWebView&&this.$nextTick(()=>{setTimeout(()=>{["left","right"].map(t=>{this._getNodeClientRect(`.zp-page-${t}`).then(l=>{this.$set(this.scrollViewContainerStyle,t,l?l[0].width+"px":"0px")})})},0)})}}};exports.scrollerModule=a;
+"use strict";
+const common_vendor = require("../../../../../../common/vendor.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingUtils = require("../z-paging-utils.js");
+const uni_modules_zPaging_components_zPaging_js_zPagingEnum = require("../z-paging-enum.js");
+const scrollerModule = {
+  props: {
+    //使用页面滚动，默认为否，当设置为是时则使用页面的滚动而非此组件内部的scroll-view的滚动，使用页面滚动时z-paging无需设置确定的高度且对于长列表展示性能更高，但配置会略微繁琐
+    usePageScroll: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("usePageScroll", false)
+    },
+    //是否可以滚动，使用内置scroll-view和nvue时有效，默认为是
+    scrollable: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("scrollable", true)
+    },
+    //控制是否出现滚动条，默认为是
+    showScrollbar: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("showScrollbar", true)
+    },
+    //是否允许横向滚动，默认为否
+    scrollX: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("scrollX", false)
+    },
+    //iOS设备上滚动到顶部时是否允许回弹效果，默认为否。关闭回弹效果后可使滚动到顶部与下拉刷新更连贯，但是有吸顶view时滚动到顶部时可能出现抖动。
+    scrollToTopBounceEnabled: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("scrollToTopBounceEnabled", false)
+    },
+    //iOS设备上滚动到底部时是否允许回弹效果，默认为是。
+    scrollToBottomBounceEnabled: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("scrollToBottomBounceEnabled", true)
+    },
+    //在设置滚动条位置时使用动画过渡，默认为否
+    scrollWithAnimation: {
+      type: Boolean,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("scrollWithAnimation", false)
+    },
+    //值应为某子元素id（id不能以数字开头）。设置哪个方向可滚动，则在哪个方向滚动到该元素
+    scrollIntoView: {
+      type: String,
+      default: uni_modules_zPaging_components_zPaging_js_zPagingUtils.u.gc("scrollIntoView", "")
+    }
+  },
+  data() {
+    return {
+      scrollTop: 0,
+      oldScrollTop: 0,
+      scrollViewStyle: {},
+      scrollViewContainerStyle: {},
+      scrollViewInStyle: {},
+      pageScrollTop: -1,
+      scrollEnable: true,
+      privateScrollWithAnimation: -1,
+      cacheScrollNodeHeight: -1
+    };
+  },
+  watch: {
+    oldScrollTop(newVal) {
+      !this.usePageScroll && this._scrollTopChange(newVal, false);
+    },
+    pageScrollTop(newVal) {
+      this.usePageScroll && this._scrollTopChange(newVal, true);
+    },
+    usePageScroll: {
+      handler(newVal) {
+        this.loaded && this.autoHeight && this._setAutoHeight(!newVal);
+      },
+      immediate: true
+    },
+    finalScrollTop(newVal) {
+      if (!this.useChatRecordMode) {
+        this.renderPropScrollTop = newVal < 6 ? 0 : 10;
+      }
+    }
+  },
+  computed: {
+    finalScrollWithAnimation() {
+      if (this.privateScrollWithAnimation !== -1) {
+        const scrollWithAnimation = this.privateScrollWithAnimation === 1;
+        this.privateScrollWithAnimation = -1;
+        return scrollWithAnimation;
+      }
+      return this.scrollWithAnimation;
+    },
+    finalScrollViewStyle() {
+      if (this.superContentZIndex != 1) {
+        this.scrollViewStyle["z-index"] = this.superContentZIndex;
+        this.scrollViewStyle["position"] = "relative";
+      }
+      return this.scrollViewStyle;
+    },
+    finalScrollTop() {
+      return this.usePageScroll ? this.pageScrollTop : this.oldScrollTop;
+    },
+    finalIsOldWebView() {
+      return this.isOldWebView && !this.usePageScroll;
+    }
+  },
+  methods: {
+    //滚动到顶部，animate为是否展示滚动动画，默认为是
+    scrollToTop(animate, checkReverse = true) {
+      this.$nextTick(() => {
+        this._scrollToTop(animate, false);
+      });
+    },
+    //滚动到底部，animate为是否展示滚动动画，默认为是
+    scrollToBottom(animate, checkReverse = true) {
+      this.$nextTick(() => {
+        this._scrollToBottom(animate);
+      });
+    },
+    //滚动到指定view(vue中有效)。sel为需要滚动的view的id值，不包含"#"；offset为偏移量，单位为px；animate为是否展示滚动动画，默认为否
+    scrollIntoViewById(sel, offset, animate) {
+      this._scrollIntoView(sel, offset, animate);
+    },
+    //滚动到指定view(vue中有效)。nodeTop为需要滚动的view的top值(通过uni.createSelectorQuery()获取)；offset为偏移量，单位为px；animate为是否展示滚动动画，默认为否
+    scrollIntoViewByNodeTop(nodeTop, offset, animate) {
+      this.scrollTop = this.oldScrollTop;
+      this.$nextTick(() => {
+        this._scrollIntoViewByNodeTop(nodeTop, offset, animate);
+      });
+    },
+    //滚动到指定位置(vue中有效)。y为与顶部的距离，单位为px；offset为偏移量，单位为px；animate为是否展示滚动动画，默认为否
+    scrollToY(y, offset, animate) {
+      this.scrollTop = this.oldScrollTop;
+      this.$nextTick(() => {
+        this._scrollToY(y, offset, animate);
+      });
+    },
+    //滚动到指定view(nvue中有效)。index为需要滚动的view的index(第几个)；offset为偏移量，单位为px；animate为是否展示滚动动画，默认为否
+    scrollIntoViewByIndex(index, offset, animate) {
+      this._scrollIntoView(index, offset, animate);
+    },
+    //滚动到指定view(nvue中有效)。view为需要滚动的view(通过`this.$refs.xxx`获取)，不包含"#"；offset为偏移量，单位为px；animate为是否展示滚动动画，默认为否
+    scrollIntoViewByView(view, offset, animate) {
+      this._scrollIntoView(view, offset, animate);
+    },
+    //当使用页面滚动并且自定义下拉刷新时，请在页面的onPageScroll中调用此方法，告知z-paging当前的pageScrollTop，否则会导致在任意位置都可以下拉刷新
+    updatePageScrollTop(value) {
+      this.pageScrollTop = value;
+    },
+    //当使用页面滚动并且设置了slot="top"时，默认初次加载会自动获取其高度，并使内部容器下移，当slot="top"的view高度动态改变时，在其高度需要更新时调用此方法
+    updatePageScrollTopHeight() {
+      this._updatePageScrollTopOrBottomHeight("top");
+    },
+    //当使用页面滚动并且设置了slot="bottom"时，默认初次加载会自动获取其高度，并使内部容器下移，当slot="bottom"的view高度动态改变时，在其高度需要更新时调用此方法
+    updatePageScrollBottomHeight() {
+      this._updatePageScrollTopOrBottomHeight("bottom");
+    },
+    //更新slot="left"和slot="right"宽度，当slot="left"或slot="right"宽度动态改变时调用
+    updateLeftAndRightWidth() {
+      this.$nextTick(() => {
+        this._updateLeftAndRightWidth();
+      });
+    },
+    //更新z-paging内置scroll-view的scrollTop
+    updateScrollViewScrollTop(scrollTop, animate = true) {
+      this.privateScrollWithAnimation = animate ? 1 : 0;
+      this.scrollTop = this.oldScrollTop;
+      this.$nextTick(() => {
+        this.scrollTop = scrollTop;
+        this.oldScrollTop = this.scrollTop;
+      });
+    },
+    //当滚动到顶部时
+    _onScrollToUpper() {
+      this.$emit("scrolltoupper");
+      this.$emit("scrollTopChange", 0);
+      this.$nextTick(() => {
+        this.oldScrollTop = 0;
+      });
+      if (!this.useChatRecordMode)
+        return;
+      if (this.loadingStatus === uni_modules_zPaging_components_zPaging_js_zPagingEnum.Enum.More.NoMore)
+        return;
+      this._onLoadingMore("click");
+    },
+    //当滚动到底部时
+    _onScrollToLower(e) {
+      (!e.detail || !e.detail.direction || e.detail.direction === "bottom") && this._onLoadingMore("toBottom");
+    },
+    //滚动到顶部
+    _scrollToTop(animate = true, isPrivate = true) {
+      if (this.usePageScroll) {
+        this.$nextTick(() => {
+          common_vendor.index.pageScrollTo({
+            scrollTop: 0,
+            duration: animate ? 100 : 0
+          });
+        });
+        return;
+      }
+      this.privateScrollWithAnimation = animate ? 1 : 0;
+      this.scrollTop = this.oldScrollTop;
+      this.$nextTick(() => {
+        this.scrollTop = 0;
+        this.oldScrollTop = this.scrollTop;
+      });
+    },
+    //滚动到底部
+    async _scrollToBottom(animate = true) {
+      if (this.usePageScroll) {
+        this.$nextTick(() => {
+          common_vendor.index.pageScrollTo({
+            scrollTop: Number.MAX_VALUE,
+            duration: animate ? 100 : 0
+          });
+        });
+        return;
+      }
+      try {
+        this.privateScrollWithAnimation = animate ? 1 : 0;
+        const pagingContainerNode = await this._getNodeClientRect(".zp-paging-container");
+        const scrollViewNode = await this._getNodeClientRect(".zp-scroll-view");
+        const pagingContainerH = pagingContainerNode ? pagingContainerNode[0].height : 0;
+        const scrollViewH = scrollViewNode ? scrollViewNode[0].height : 0;
+        if (pagingContainerH > scrollViewH) {
+          this.scrollTop = this.oldScrollTop;
+          this.$nextTick(() => {
+            this.scrollTop = pagingContainerH - scrollViewH + this.virtualPlaceholderTopHeight;
+            this.oldScrollTop = this.scrollTop;
+          });
+        }
+      } catch (e) {
+      }
+    },
+    //滚动到指定view
+    _scrollIntoView(sel, offset = 0, animate = false, finishCallback) {
+      try {
+        this.scrollTop = this.oldScrollTop;
+        this.$nextTick(() => {
+          this._getNodeClientRect("#" + sel.replace("#", ""), this.$parent).then((node) => {
+            if (node) {
+              let nodeTop = node[0].top;
+              this._scrollIntoViewByNodeTop(nodeTop, offset, animate);
+              finishCallback && finishCallback();
+            }
+          });
+        });
+      } catch (e) {
+      }
+    },
+    //通过nodeTop滚动到指定view
+    _scrollIntoViewByNodeTop(nodeTop, offset = 0, animate = false) {
+      this._scrollToY(nodeTop, offset, animate, true);
+    },
+    //滚动到指定位置
+    _scrollToY(y, offset = 0, animate = false, addScrollTop = false) {
+      this.privateScrollWithAnimation = animate ? 1 : 0;
+      if (this.usePageScroll) {
+        common_vendor.index.pageScrollTo({
+          scrollTop: y - offset,
+          duration: animate ? 100 : 0
+        });
+      } else {
+        if (addScrollTop) {
+          y += this.oldScrollTop;
+        }
+        this.scrollTop = y - offset;
+        this.oldScrollTop = this.scrollTop;
+      }
+    },
+    //scroll-view滚动中
+    _scroll(e) {
+      this.$emit("scroll", e);
+      const scrollTop = e.detail.scrollTop;
+      this.finalUseVirtualList && this._updateVirtualScroll(scrollTop, this.oldScrollTop - scrollTop);
+      this.oldScrollTop = scrollTop;
+      const scrollDiff = e.detail.scrollHeight - this.oldScrollTop;
+      !this.isIos && this._checkScrolledToBottom(scrollDiff);
+    },
+    //检测scrollView是否要铺满屏幕
+    _doCheckScrollViewShouldFullHeight(totalData) {
+      if (this.autoFullHeight && this.usePageScroll && this.isTotalChangeFromAddData) {
+        this.$nextTick(() => {
+          this._checkScrollViewShouldFullHeight((scrollViewNode, pagingContainerNode) => {
+            this._preCheckShowNoMoreInside(totalData, scrollViewNode, pagingContainerNode);
+          });
+        });
+      } else {
+        this._preCheckShowNoMoreInside(totalData);
+      }
+    },
+    //检测z-paging是否要全屏覆盖(当使用页面滚动并且不满全屏时，默认z-paging需要铺满全屏，避免数据过少时内部的empty-view无法正确展示)
+    async _checkScrollViewShouldFullHeight(callback) {
+      try {
+        const scrollViewNode = await this._getNodeClientRect(".zp-scroll-view");
+        const pagingContainerNode = await this._getNodeClientRect(".zp-paging-container-content");
+        if (!scrollViewNode || !pagingContainerNode)
+          return;
+        const scrollViewHeight = pagingContainerNode[0].height;
+        const scrollViewTop = scrollViewNode[0].top;
+        if (this.isAddedData && scrollViewHeight + scrollViewTop <= this.windowHeight) {
+          this._setAutoHeight(true, scrollViewNode);
+          callback(scrollViewNode, pagingContainerNode);
+        } else {
+          this._setAutoHeight(false);
+          callback(null, null);
+        }
+      } catch (e) {
+        callback(null, null);
+      }
+    },
+    //scrollTop改变时触发
+    _scrollTopChange(newVal, isPageScrollTop) {
+      this.$emit("scrollTopChange", newVal);
+      this.$emit("update:scrollTop", newVal);
+      this._checkShouldShowBackToTop(newVal);
+      const scrollTop = this.isIos ? newVal > 5 ? 6 : 0 : newVal;
+      if (isPageScrollTop) {
+        this.wxsPageScrollTop = scrollTop;
+      } else {
+        this.wxsScrollTop = scrollTop;
+      }
+    },
+    //更新使用页面滚动时slot="top"或"bottom"插入view的高度
+    _updatePageScrollTopOrBottomHeight(type) {
+      if (!this.usePageScroll)
+        return;
+      this._doCheckScrollViewShouldFullHeight(this.realTotalData);
+      const node = `.zp-page-${type}`;
+      const marginText = `margin${type.slice(0, 1).toUpperCase() + type.slice(1)}`;
+      let safeAreaInsetBottomAdd = this.safeAreaInsetBottom;
+      this.$nextTick(() => {
+        let delayTime = 0;
+        setTimeout(() => {
+          this._getNodeClientRect(node).then((res) => {
+            if (res) {
+              let pageScrollNodeHeight = res[0].height;
+              if (type === "bottom") {
+                if (safeAreaInsetBottomAdd) {
+                  pageScrollNodeHeight += this.safeAreaBottom;
+                }
+              } else {
+                this.cacheTopHeight = pageScrollNodeHeight;
+              }
+              this.$set(this.scrollViewStyle, marginText, `${pageScrollNodeHeight}px`);
+            } else if (safeAreaInsetBottomAdd) {
+              this.$set(this.scrollViewStyle, marginText, `${this.safeAreaBottom}px`);
+            }
+          });
+        }, delayTime);
+      });
+    },
+    //获取slot="left"和slot="right"宽度并且更新布局
+    _updateLeftAndRightWidth() {
+      if (!this.finalIsOldWebView)
+        return;
+      this.$nextTick(() => {
+        let delayTime = 0;
+        setTimeout(() => {
+          ["left", "right"].map((position) => {
+            this._getNodeClientRect(`.zp-page-${position}`).then((res) => {
+              this.$set(this.scrollViewContainerStyle, position, res ? res[0].width + "px" : "0px");
+            });
+          });
+        }, delayTime);
+      });
+    }
+  }
+};
+exports.scrollerModule = scrollerModule;
